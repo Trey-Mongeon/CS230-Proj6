@@ -24,16 +24,6 @@
 // Private Structures:
 //------------------------------------------------------------------------------
 
-typedef struct Collider
-{
-	// Pointer to the collider's parent Entity.
-	Entity* parent;
-
-	// Pointer to a function that handles collisions between two objects.
-	CollisionEventHandler	handler;
-
-} Collider;
-
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -49,23 +39,6 @@ typedef struct Collider
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
-
-
-// Dynamically allocate a new Collider component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-Collider* ColliderCreate(void)
-{
-	Collider* colliderPtr = calloc(1, sizeof(Collider));
-
-	if (colliderPtr)
-	{
-		return colliderPtr;
-	}
-	else
-	{
-		return NULL;
-	}
-}
 
 
 // Dynamically allocate a clone of an existing Collider component.
@@ -106,18 +79,6 @@ void ColliderFree(Collider** collider)
 }
 
 
-// Read the properties of a Collider component from a file.
-// [NOTE: No values need to be read at this time.]
-// Params:
-//	 collider = Pointer to the Collider component.
-//	 stream = Pointer to the data stream used for reading.
-void ColliderRead(Collider* collider, Stream stream)
-{
-	UNREFERENCED_PARAMETER(collider);
-	UNREFERENCED_PARAMETER(stream);
-}
-
-
 // Set the parent Entity for a Collider component.
 // Params:
 //	 collider = Pointer to the Collider component.
@@ -138,7 +99,7 @@ void ColliderSetParent(Collider* collider, Entity* parent)
 // Params:
 //	 collider = Pointer to the first Collider component.
 //	 other = Pointer to the second Collider component.
-void ColliderCheck(Collider* collider, Collider* other)
+void ColliderCheck(const Collider* collider, const Collider* other)
 {
 	Transform* colliderTransform = EntityGetTransform(collider->parent);
 	const DGL_Vec2* colliderScale = TransformGetScale(colliderTransform);

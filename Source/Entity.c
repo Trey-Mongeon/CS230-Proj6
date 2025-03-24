@@ -306,11 +306,15 @@ void EntityRead(Entity* entity, Stream stream)
 				BehaviorHudTextRead(hudBehavior, stream);
 				EntityAddBehavior(entity, hudBehavior);
 			}
-			else if (strstr(token, "Collider"))
+			else if (strstr(token, "ColliderCirlce"))
 			{
-				Collider* collider = ColliderCreate();
-				ColliderRead(collider, stream);
-				EntityAddCollider(entity, collider);
+				// NEED TO IMPLEMENT THIS HERE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+				//EntityAddCollider(entity, collider);
+			}
+			else if (strstr(token, "ColliderLine"))
+			{
+				// NEED TO IMPLEMENT THIS HERE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+				//EntityAddCollider(entity, collider);
 			}
 			else if(token[0] == '\0')
 			{ 
