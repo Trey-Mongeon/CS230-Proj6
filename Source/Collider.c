@@ -15,6 +15,8 @@
 #include "Entity.h"
 #include "DGL.h"
 #include "Vector2D.h"
+#include "ColliderCircle.h"
+#include "ColliderLine.h"
 
 //------------------------------------------------------------------------------
 // Private Constants:
@@ -36,6 +38,8 @@
 // Private Function Declarations:
 //------------------------------------------------------------------------------
 
+bool ColliderIsColliding(const Collider* collider, const Collider* other);
+
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
@@ -53,11 +57,12 @@ Collider* ColliderClone(const Collider* other)
 {
 	if (other)
 	{
-		Collider* newCollider = calloc(1, sizeof(Collider));
+		Collider* newCollider = calloc(1, other->memorySize);
 
 		if (newCollider)
 		{
-			*newCollider = *other;
+			memcpy(newCollider, other, other->memorySize);
+			newCollider->parent = NULL;
 			return newCollider;
 		}
 	}
@@ -101,19 +106,7 @@ void ColliderSetParent(Collider* collider, Entity* parent)
 //	 other = Pointer to the second Collider component.
 void ColliderCheck(const Collider* collider, const Collider* other)
 {
-	Transform* colliderTransform = EntityGetTransform(collider->parent);
-	const DGL_Vec2* colliderScale = TransformGetScale(colliderTransform);
-	float radius1 = colliderScale->x / 2.0f;
-	DGL_Vec2 colliderTranslation = *TransformGetTranslation(colliderTransform);
-
-	Transform* otherTransform = EntityGetTransform(other->parent);
-	const DGL_Vec2* otherScale = TransformGetScale(otherTransform);
-	float radius2 = otherScale->x / 2.0f;
-	DGL_Vec2 otherTranslation = *TransformGetTranslation(otherTransform);
-
-	float lengthBetween = Vector2DDistance(&colliderTranslation, &otherTranslation);
-
-	if (lengthBetween <= radius1 + radius2)
+	if (ColliderIsColliding(collider, other))
 	{
 		if (collider->handler)
 		{
@@ -146,3 +139,36 @@ void ColliderSetCollisionHandler(Collider* collider, CollisionEventHandler handl
 // Private Functions:
 //------------------------------------------------------------------------------
 
+
+bool ColliderIsColliding(const Collider* collider, const Collider* other)
+{
+	switch (collider->type)
+	{
+	case ColliderTypeCircle:
+		if (other->type == ColliderTypeCircle)
+		{
+			return ColliderCircleIsCollidingWithCircle(collider, other);
+		}
+		else if(other->type == ColliderTypeLine)
+		{
+			//call ColliderCircleCollidingWithLine
+		}
+		break;
+
+	case ColliderTypeLine:
+		if (other->type == ColliderTypeCircle)
+		{
+			//call ColliderLineIsCollidingWithCircle
+		}
+		else if (other->type == ColliderTypeLine)
+		{
+			return false;
+		}
+		break;
+
+	default:
+		return false;
+		break;
+	}
+	return false;
+}

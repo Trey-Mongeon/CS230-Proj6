@@ -50,7 +50,7 @@ typedef struct Scene Scene;
 // Get the instance of the Asteroids Scene.
 // Returns:
 //	 Pointer to the base Scene structure for this derived Scene.
-const Scene* AsteroidsSceneGetInstance(void);
+const Scene* OmegaSceneGetInstance(void);
 
 //------------------------------------------------------------------------------
 

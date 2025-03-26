@@ -23,6 +23,8 @@
 #include "Collider.h"
 #include "BehaviorAsteroid.h"
 #include "BehaviorHudText.h"
+#include "ColliderCircle.h"
+#include "ColliderLine.h"
 
 //------------------------------------------------------------------------------
 // Private Constants:
@@ -306,15 +308,16 @@ void EntityRead(Entity* entity, Stream stream)
 				BehaviorHudTextRead(hudBehavior, stream);
 				EntityAddBehavior(entity, hudBehavior);
 			}
-			else if (strstr(token, "ColliderCirlce"))
+			else if (strstr(token, "ColliderCircle"))
 			{
-				// NEED TO IMPLEMENT THIS HERE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-				//EntityAddCollider(entity, collider);
+				Collider* circleCollider = ColliderCircleCreate();
+				ColliderCircleRead(circleCollider, stream);
+				EntityAddCollider(entity, circleCollider);
 			}
 			else if (strstr(token, "ColliderLine"))
 			{
 				// NEED TO IMPLEMENT THIS HERE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-				//EntityAddCollider(entity, collider);
+				//EntityAddCollider(entity, lineCollider);
 			}
 			else if(token[0] == '\0')
 			{ 
