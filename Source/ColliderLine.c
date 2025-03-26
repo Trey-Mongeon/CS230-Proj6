@@ -11,6 +11,9 @@
 
 #include "stdafx.h"
 #include "ColliderLine.h"
+#include "Vector2D.h"
+#include "Stream.h"
+#include "Collider.h"
 
 //------------------------------------------------------------------------------
 // Private Constants:
@@ -19,6 +22,27 @@
 //------------------------------------------------------------------------------
 // Private Structures:
 //------------------------------------------------------------------------------
+
+typedef struct ColliderLineSegment
+{
+	// A single line segment (P0 and P1).
+	Vector2D	point[2];
+} ColliderLineSegment;
+
+
+typedef struct ColliderLine
+{
+	// Inherit the base collider structure.
+	Collider	base;
+
+	// The number of line segments in the list.
+	unsigned int		lineCount;
+
+	// The individual line segments.
+	// (NOTE: Make sure to allocate enough memory for all line segments!)
+	ColliderLineSegment	lineSegments[cLineSegmentMax];
+
+} ColliderLine;
 
 //------------------------------------------------------------------------------
 // Public Variables:
