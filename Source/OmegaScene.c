@@ -102,25 +102,32 @@ static void OmegaSceneLoad(void)
 // Initialize the entities and variables used by the scene.
 static void OmegaSceneInit()
 {
-	Entity* spaceshipEntity = EntityFactoryBuild("Spaceship");
+
+	Entity* arenaEntity = EntityFactoryBuild("Arena");
+	if (arenaEntity)
+	{
+		SceneAddEntity(arenaEntity);
+	}
+
+	Entity* spaceshipEntity = EntityFactoryBuild("SpaceshipOmega");
 	if (spaceshipEntity)
 	{
 		SceneAddEntity(spaceshipEntity);
 	}
 
-	Entity* asteroidsScoreEntity = EntityFactoryBuild("AsteroidsScore");
+	Entity* asteroidsScoreEntity = EntityFactoryBuild("OmegaScore");
 	if (asteroidsScoreEntity)
 	{
 		SceneAddEntity(asteroidsScoreEntity);
 	}
 
-	Entity* asteroidsHighScoreEntity = EntityFactoryBuild("AsteroidsHighScore");
+	Entity* asteroidsHighScoreEntity = EntityFactoryBuild("OmegaHighScore");
 	if (asteroidsHighScoreEntity)
 	{
 		SceneAddEntity(asteroidsHighScoreEntity);
 	}
 
-	Entity* asteroidsWaveEntity = EntityFactoryBuild("AsteroidsWave");
+	Entity* asteroidsWaveEntity = EntityFactoryBuild("OmegaWave");
 	if (asteroidsWaveEntity)
 	{
 		SceneAddEntity(asteroidsWaveEntity);
