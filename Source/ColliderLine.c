@@ -14,11 +14,14 @@
 #include "Vector2D.h"
 #include "Stream.h"
 #include "Collider.h"
+#include "Entity.h"
+#include "Transform.h"
+#include "Physics.h"
 
 //------------------------------------------------------------------------------
 // Private Constants:
 //------------------------------------------------------------------------------
-
+#define cLineSegmentMax 32
 //------------------------------------------------------------------------------
 // Private Structures:
 //------------------------------------------------------------------------------
@@ -66,7 +69,19 @@ typedef struct ColliderLine
 // (Hint: Make sure to initialize the ColliderType and memorySize correctly.)
 Collider* ColliderLineCreate(void)
 {
-	return NULL;
+	ColliderLine* newCollider = calloc(1, sizeof(ColliderLine));
+
+	if (newCollider)
+	{
+		newCollider->base.type = ColliderTypeLine;
+		newCollider->base.memorySize = sizeof(ColliderLine);
+
+		return (Collider*)newCollider;
+	}
+	else
+	{
+		return NULL;
+	}
 }
 
 
@@ -79,8 +94,22 @@ Collider* ColliderLineCreate(void)
 //	 stream = Pointer to the data stream used for reading.
 void ColliderLineRead(Collider* collider, Stream stream)
 {
-	UNREFERENCED_PARAMETER(collider);
-	UNREFERENCED_PARAMETER(stream);
+	if (collider)
+	{
+		ColliderLine* lineCollider = (ColliderLine*)collider;
+
+		int readAmt = StreamReadInt(stream);
+		for (int i = 0; i < readAmt; ++i)
+		{
+			DGL_Vec2 p0;
+			DGL_Vec2 p1;
+			StreamReadVector2D(stream, &p0);
+			StreamReadVector2D(stream, &p1);
+
+			collider = (Collider*)lineCollider;
+			ColliderLineAddLineSegment(collider, &p0, &p1);
+		}
+	}
 }
 
 
@@ -91,9 +120,18 @@ void ColliderLineRead(Collider* collider, Stream stream)
 //	 p1 = The line segment's ending position.
 void ColliderLineAddLineSegment(Collider* collider, const Vector2D* p0, const Vector2D* p1)
 {
-	UNREFERENCED_PARAMETER(collider);
-	UNREFERENCED_PARAMETER(p0);
-	UNREFERENCED_PARAMETER(p1);
+	if (collider && p0 && p1)
+	{
+		ColliderLine* lineCollider = (ColliderLine*)collider;
+
+		ColliderLineSegment segment = { 0 };
+
+		segment.point[0] = *p0;
+		segment.point[1] = *p1;
+
+		lineCollider->lineSegments[lineCollider->lineCount] = segment;
+		++lineCollider->lineCount;
+	}
 }
 
 
@@ -107,9 +145,91 @@ void ColliderLineAddLineSegment(Collider* collider, const Vector2D* p0, const Ve
 //	   else return false.
 bool ColliderLineIsCollidingWithCircle(const Collider* collider, const Collider* other)
 {
-	UNREFERENCED_PARAMETER(collider);
-	UNREFERENCED_PARAMETER(other);
-	return false;
+	if (collider && other)
+	{
+		Entity* entityO = other->parent;
+
+		Physics* physicsO = EntityGetPhysics(entityO);
+		Transform* transformO = EntityGetTransform(entityO);
+
+		const DGL_Vec2 Pc = *TransformGetTranslation(transformO);
+		const DGL_Vec2 Po = *PhysicsGetOldTranslation(physicsO);
+
+		DGL_Vec2 dispO = { 0 };
+		Vector2DSub(&dispO, &Pc, &Po);
+
+
+		ColliderLine* lineCollider = (ColliderLine*)collider;
+
+		for (unsigned int i = 0; i < lineCollider->lineCount; ++i)
+		{
+			ColliderLineSegment segment = lineCollider->lineSegments[i];
+
+			DGL_Vec2 P0 = segment.point[0];
+			DGL_Vec2 P1 = segment.point[1];
+
+			DGL_Vec2 e = { 0 };
+			Vector2DSub(&e, &P1, &P0);
+
+			DGL_Vec2 n = { 0 };
+			n.x = e.y;
+			n.y = -e.x;
+
+			Vector2DNormalize(&n, &n);
+
+			if (Vector2DDotProduct(&dispO, &n) == 0)
+			{
+				continue;
+			}
+
+			if ((Vector2DDotProduct(&n, &Po) <= Vector2DDotProduct(&n, &P0)) && (Vector2DDotProduct(&n, &Pc) < Vector2DDotProduct(&n, &P0)))
+			{
+				continue;
+			}
+
+			if ((Vector2DDotProduct(&n, &Po) >= Vector2DDotProduct(&n, &P0)) && (Vector2DDotProduct(&n, &Pc) > Vector2DDotProduct(&n, &P0)))
+			{
+				continue;
+			}
+
+			float ti = (Vector2DDotProduct(&n, &P0) - Vector2DDotProduct(&n, &Po)) / Vector2DDotProduct(&n, &dispO);
+
+			DGL_Vec2 Bi = { 0 };
+			Vector2DScaleAdd(&Bi, &dispO, ti, &Po);
+
+
+			DGL_Vec2 temp = { 0 };
+			Vector2DSub(&temp, &P1, &P0);
+
+			DGL_Vec2 temp1 = { 0 };
+			Vector2DSub(&temp1, &Bi, &P0);
+
+			if (Vector2DDotProduct(&temp, &temp1) < 0)
+			{
+				continue;
+			}
+
+
+			Vector2DSub(&temp, &P0, &P1);
+
+			Vector2DSub(&temp1, &Bi, &P1);
+
+			if (Vector2DDotProduct(&temp, &temp1) < 0)
+			{
+				continue;
+			}
+
+			continue;
+		}
+
+
+
+		return false;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 

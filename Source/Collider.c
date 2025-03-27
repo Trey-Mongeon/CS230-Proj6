@@ -158,7 +158,7 @@ bool ColliderIsColliding(const Collider* collider, const Collider* other)
 	case ColliderTypeLine:
 		if (other->type == ColliderTypeCircle)
 		{
-			//call ColliderLineIsCollidingWithCircle
+			return ColliderLineIsCollidingWithCircle(collider, other);
 		}
 		else if (other->type == ColliderTypeLine)
 		{

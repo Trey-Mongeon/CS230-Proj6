@@ -316,8 +316,9 @@ void EntityRead(Entity* entity, Stream stream)
 			}
 			else if (strstr(token, "ColliderLine"))
 			{
-				// NEED TO IMPLEMENT THIS HERE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-				//EntityAddCollider(entity, lineCollider);
+				Collider* lineCollider = ColliderLineCreate();
+				ColliderLineRead(lineCollider, stream);
+				EntityAddCollider(entity, lineCollider);
 			}
 			else if(token[0] == '\0')
 			{ 
