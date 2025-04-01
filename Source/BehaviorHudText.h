@@ -17,10 +17,7 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
+
 
 //------------------------------------------------------------------------------
 // Forward References:
@@ -102,7 +99,5 @@ void BehaviorHudTextRead(Behavior* behavior, Stream stream);
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
+
 

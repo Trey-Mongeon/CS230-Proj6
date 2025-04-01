@@ -17,10 +17,7 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
+
 
 //------------------------------------------------------------------------------
 // Forward References:
@@ -67,7 +64,5 @@ float RandomRangeFloat(float rangeMin, float rangeMax);
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
+
 

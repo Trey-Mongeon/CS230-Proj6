@@ -17,10 +17,7 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
+
 
 //------------------------------------------------------------------------------
 // Forward References:
@@ -120,7 +117,5 @@ void BehaviorUpdate(Behavior* behavior, float dt);
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
+
 

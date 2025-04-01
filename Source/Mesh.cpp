@@ -176,7 +176,7 @@ void MeshBuildQuad(Mesh* mesh, float xHalfSize, float yHalfSize, float uSize, fl
 	DGL_Color blackMesh = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	DGL_Graphics_AddTriangle(
-		&(DGL_Vec2){ -xHalfSize, -yHalfSize }, &blackMesh, &(DGL_Vec2) { 0.0f, vSize },
+		&(DGL_Vec2){ -xHalfSize, -yHalfSize }, &blackMesh, &(DGL_Vec2){ 0.0f, vSize },
 		&(DGL_Vec2){  xHalfSize,  yHalfSize }, &blackMesh, &(DGL_Vec2){ uSize, 0.0f },
 		&(DGL_Vec2){  xHalfSize, -yHalfSize }, &blackMesh, &(DGL_Vec2){ uSize, vSize });
 	DGL_Graphics_AddTriangle(

@@ -17,10 +17,7 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
+
 
 //------------------------------------------------------------------------------
 // Forward References:
@@ -167,7 +164,4 @@ void SpriteSetText(Sprite* sprite, const char* text);
 
 /*----------------------------------------------------------------------------*/
 
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
 
