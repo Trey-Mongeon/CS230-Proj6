@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Teleporter.c
+// File Name:	Teleporter.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 5
 // Course:		CS230S25
