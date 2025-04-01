@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	ColliderCircle.c
+// File Name:	ColliderCircle.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 6
 // Course:		CS230S25

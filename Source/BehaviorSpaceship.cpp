@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	BehaviorSpaceship.c
+// File Name:	BehaviorSpaceship.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 4
 // Course:		CS230S25

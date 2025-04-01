@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	BehaviorAsteroid.c
+// File Name:	BehaviorAsteroid.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 5
 // Course:		CS230S25

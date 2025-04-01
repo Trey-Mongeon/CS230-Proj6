@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	stdafx.c
+// File Name:	stdafx.cpp
 // Author(s):	Doug Schilling (dschilling)
 // Project:		Project 0
 // Course:		CS230S25

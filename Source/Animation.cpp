@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Animation.c
+// File Name:	Animation.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 3
 // Course:		CS230S25

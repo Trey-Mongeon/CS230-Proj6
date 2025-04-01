@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	MeshLibrary.c
+// File Name:	MeshLibrary.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 4
 // Course:		CS230S25

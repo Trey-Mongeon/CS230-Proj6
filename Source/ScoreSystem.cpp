@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	ScoreSystem.c
+// File Name:	ScoreSystem.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 2
 // Course:		CS230S25

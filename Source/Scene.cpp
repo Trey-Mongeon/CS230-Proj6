@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Scene.c
+// File Name:	Scene.cpp
 // Author(s):	Doug Schilling (dschilling)
 // Project:		Project 0
 // Course:		CS230S25

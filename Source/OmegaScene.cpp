@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	OmegaScene.c
+// File Name:	OmegaScene.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 6
 // Course:		CS230S25

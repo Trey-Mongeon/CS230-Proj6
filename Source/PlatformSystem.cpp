@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	PlatformSystem.c
+// File Name:	PlatformSystem.cpp
 // Author(s):	Doug Schilling (dschilling)
 // Project:		Project 6
 // Course:		CS230S25	

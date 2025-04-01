@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	AsteroidsScene.c
+// File Name:	AsteroidsScene.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 4
 // Course:		CS230S25

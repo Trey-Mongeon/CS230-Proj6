@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	CheatSystem.c
+// File Name:	CheatSystem.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 3
 // Course:		CS230S25

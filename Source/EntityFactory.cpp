@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	EntityFactory.c
+// File Name:	EntityFactory.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 2
 // Course:		CS230S25

@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Random.c
+// File Name:	Random.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 5
 // Course:		CS230S25

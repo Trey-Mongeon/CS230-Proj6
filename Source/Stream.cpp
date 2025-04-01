@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stream.c
+// File Name:	Stream.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 2
 // Course:		CS230S25

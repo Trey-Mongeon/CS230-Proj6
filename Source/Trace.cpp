@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Trace.c
+// File Name:	Trace.cpp
 // Author(s):	Doug Schilling (dschilling)
 // Project:		Project 2
 // Course:		CS230S25
