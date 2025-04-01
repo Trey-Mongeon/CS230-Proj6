@@ -24,8 +24,8 @@
 // Private Constants:
 //------------------------------------------------------------------------------
 
-static const unsigned cAsteroidSpawnInitial = 0; //8
-static const unsigned cAsteroidSpawnMaximum = 0; //20
+static const unsigned cAsteroidSpawnInitial = 8;
+static const unsigned cAsteroidSpawnMaximum = 20;
 
 
 //------------------------------------------------------------------------------

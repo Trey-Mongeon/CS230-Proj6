@@ -219,6 +219,31 @@ bool ColliderLineIsCollidingWithCircle(const Collider* collider, const Collider*
 				continue;
 			}
 
+			DGL_Vec2 iVec = { 0 };
+			Vector2DSub(&iVec, &Pc, &Bi);
+
+			DGL_Vec2 s = { 0 };
+			Vector2DScale(&s, &n, Vector2DDotProduct(&iVec, &n));
+
+			DGL_Vec2 r = { 0 };
+			DGL_Vec2 tempVec = { 0 };
+			Vector2DScale(&tempVec, &s, 2.0f);
+			Vector2DSub(&r, &iVec, &tempVec);
+
+			DGL_Vec2 Br = { 0 };
+			Vector2DAdd(&Br, &Bi, &r);
+
+			float angle = Vector2DToAngleRad(&r);
+
+			DGL_Vec2 finalVec = { 0 };
+			Vector2DNormalize(&finalVec, &r);
+			float speed = Vector2DLength(PhysicsGetVelocity(physicsO));
+			Vector2DScale(&finalVec, &finalVec, speed);
+			
+			PhysicsSetVelocity(physicsO, &finalVec);
+			TransformSetTranslation(transformO, &Br);
+			TransformSetRotation(transformO, angle);
+
 			continue;
 		}
 
