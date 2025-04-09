@@ -71,7 +71,7 @@ typedef struct EntityContainer
 //	   else return NULL.
 EntityContainer* EntityContainerCreate()
 {
-	EntityContainer* container = calloc(1, sizeof(EntityContainer));
+	EntityContainer* container = new EntityContainer;
 
 	if (container)
 	{

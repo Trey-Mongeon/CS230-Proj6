@@ -63,6 +63,8 @@ typedef struct Level1Scene
 	// Add any scene-specific variables second.
 	int numLives;
 
+	enum MonkeyStates monkeyState;
+
 	Mesh* mesh;
 
 	SpriteSource* spriteSource;
@@ -73,7 +75,6 @@ typedef struct Level1Scene
 
 	char livesBuffer[16];
 
-	enum MonkeyStates monkeyState;
 
 	Mesh* monkeyMesh;
 
@@ -126,8 +127,8 @@ static Level1Scene instance =
 	{ "Level1", Level1SceneLoad, Level1SceneInit, Level1SceneUpdate, Level1SceneRender, Level1SceneExit, Level1SceneUnload },
 
 	// Initialize any scene-specific variables:
-	.numLives = 0,
-	.monkeyState = MonkeyInvalid
+	{0},
+	{MonkeyInvalid}
 };
 
 //------------------------------------------------------------------------------

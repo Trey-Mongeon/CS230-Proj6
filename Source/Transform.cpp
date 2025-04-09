@@ -22,24 +22,7 @@
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
-typedef struct Transform
-{
-	// The translation (or world position) of an entity.
-	Vector2D	translation;
 
-	// The rotation (or orientation) of an entity (in radians).
-	float	rotation;
-
-	// The scale (or size) of an entity.
-	// (Hint: This should be initialized to (1, 1).)
-	Vector2D	scale;
-
-	Matrix2D	matrix;
-
-	bool	isDirty;
-
-
-} Transform;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -64,7 +47,7 @@ typedef struct Transform
 //	   else return NULL.
 Transform* TransformCreate(void)
 {
-	Transform* transformPtr = calloc(1, sizeof(Transform));
+	Transform* transformPtr = new Transform;
 
 	if (transformPtr)
 	{
@@ -106,7 +89,7 @@ Transform* TransformClone(const Transform* other)
 {
 	if (other)
 	{
-		Transform* newTransform = calloc(1, sizeof(Transform));
+		Transform* newTransform = new Transform;
 
 		if (newTransform)
 		{

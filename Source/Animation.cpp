@@ -23,34 +23,7 @@
 // Public Structures:
 //------------------------------------------------------------------------------
 
-typedef struct Animation
-{
-	// Pointer to the parent Entity associated with the Animation component.
-	Entity* parent;
 
-	// The current frame being displayed.
-	unsigned int frameIndex;
-
-	// The maximum number of frames in the sequence.
-	unsigned int frameCount;
-
-	// The time remaining for the current frame.
-	float frameDelay;
-
-	// The amount of time to display each successive frame.
-	float frameDuration;
-
-	// True if the animation is running; false if the animation has stopped.
-	bool isRunning;
-
-	// True if the animation loops back to the beginning.
-	bool isLooping;
-
-	// True if the end of the animation sequence has been reached, false otherwise.
-	// (Hint: This should be true for only one game loop.)
-	bool isDone;
-
-} Animation;
 
 //------------------------------------------------------------------------------
 // Public Variables:
@@ -72,7 +45,7 @@ typedef struct Animation
 // (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
 Animation* AnimationCreate(void)
 {
-	Animation* animationPtr = calloc(1, sizeof(Animation));
+	Animation* animationPtr = new Animation;
 	if (animationPtr)
 	{
 		return animationPtr;
@@ -83,19 +56,52 @@ Animation* AnimationCreate(void)
 	}
 }
 
-// Free the memory associated with an Animation component.
-// (NOTE: The Animation pointer must be set to NULL.)
-// Params:
-//	 animation = Pointer to the Animation pointer.
-void AnimationFree(Animation** animation)
+Animation::Animation()
 {
-	if (animation && *animation)
-	{
-		free(*animation);
-		*animation = NULL;
-	}
+	mParent = NULL;
+
+	mType = cAnimation;
+
+	frameIndex = 0;
+
+	frameCount = 0;
+
+	frameDelay = 0;
+
+	frameDuration = 0;
+
+	isRunning = false;
+
+	isLooping = false;
+
+	isDone = false;
 }
 
+Animation::~Animation()
+{
+
+}
+
+Animation::Animation(const Animation& other)
+{
+	mParent = other.mParent;
+
+	mType = other.mType;
+
+	frameIndex = other.frameIndex;
+
+	frameCount = other.frameCount;
+
+	frameDelay = other.frameDelay;
+
+	frameDuration = other.frameDuration;
+
+	isRunning = other.isRunning;
+
+	isLooping = other.isLooping;
+
+	isDone = other.isDone;
+}
 
 // Dynamically allocate a clone of an existing Animation component.
 // (Hint: Perform a shallow copy of the member variables.)
@@ -109,7 +115,7 @@ Animation* AnimationClone(const Animation* other)
 {
 	if (other)
 	{
-		Animation* newAnim = calloc(1, sizeof(Animation));
+		Animation* newAnim = new Animation;
 
 		if (newAnim)
 		{
@@ -140,14 +146,6 @@ void AnimationRead(Animation* animation, Stream stream)
 	animation->isLooping = StreamReadBoolean(stream);
 }
 
-// Set the parent Entity for an Animation component.
-// Params:
-//	 animation = Pointer to the Animation component.
-//	 parent = Pointer to the parent Entity.
-void AnimationSetParent(Animation* animation, Entity* parent)
-{
-	animation->parent = parent;
-}
 
 // Play a simple animation sequence [0 .. frameCount - 1].
 // (Hint: This function must initialize all variables, except for "parent".)
@@ -160,7 +158,7 @@ void AnimationPlay(Animation* animation, int frameCount, float frameDuration, bo
 {
 	if (animation)
 	{
-		animation->frameCount = frameCount;                      ///// TEST THIS FUNCTION THOROUGHLY
+		animation->frameCount = frameCount;
 		animation->frameDuration = frameDuration;
 		animation->isLooping = isLooping;
 		animation->frameDelay = frameDuration;
@@ -168,7 +166,7 @@ void AnimationPlay(Animation* animation, int frameCount, float frameDuration, bo
 		animation->isDone = false;
 		animation->isRunning = true;
 
-		SpriteSetFrame(EntityGetSprite(animation->parent), animation->frameIndex); /// ********************************************* CHECK THIS TOO
+		SpriteSetFrame(EntityGetSprite(animation->parent), animation->frameIndex);
 	}
 	else
 	{
@@ -207,7 +205,7 @@ void AnimationUpdate(Animation* animation, float dt)
 
 static void AnimationAdvanceFrame(Animation* animation)
 {
-	if (animation && animation->parent) // SAYS VALID POINTERS ON THE POWERPOINT
+	if (animation && animation->parent)
 	{
 		animation->frameIndex += 1;
 		if (animation->frameIndex >= animation->frameCount)

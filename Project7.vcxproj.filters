@@ -77,9 +77,6 @@
     <ClCompile Include="Source\StubSystem.cpp">
       <Filter>Engine\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DemoScene.cpp">
-      <Filter>Game\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PlatformSystem.cpp">
       <Filter>Engine\Systems\Platform</Filter>
     </ClCompile>
@@ -134,35 +131,8 @@
     <ClCompile Include="Source\Animation.cpp">
       <Filter>Engine\Entities\Components\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\BehaviorBullet.cpp">
-      <Filter>Game\Behaviors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BehaviorSpaceship.cpp">
-      <Filter>Game\Behaviors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Behavior.cpp">
-      <Filter>Engine\Entities\Components\Behavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EntityContainer.cpp">
-      <Filter>Engine\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AsteroidsScene.cpp">
-      <Filter>Game\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Source\MeshLibrary.cpp">
       <Filter>Engine\Entities\Components\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BehaviorAsteroid.cpp">
-      <Filter>Game\Behaviors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BehaviorHudText.cpp">
-      <Filter>Game\Behaviors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Teleporter.cpp">
-      <Filter>Game\Behaviors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Collider.cpp">
-      <Filter>Engine\Entities\Components\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Source\Random.cpp">
       <Filter>Engine\Framework</Filter>
@@ -170,20 +140,14 @@
     <ClCompile Include="Source\SpriteSourceLibrary.cpp">
       <Filter>Engine\Entities\Components\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ColliderCircle.cpp">
-      <Filter>Engine\Entities\Components\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ColliderLine.cpp">
-      <Filter>Engine\Entities\Components\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\OmegaScene.cpp">
-      <Filter>Game\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CheatSystem.cpp">
       <Filter>Game\Systems\Cheat</Filter>
     </ClCompile>
     <ClCompile Include="Source\ScoreSystem.cpp">
       <Filter>Game\Systems\Score System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component.cpp">
+      <Filter>Engine\Entities\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -207,9 +171,6 @@
     </ClInclude>
     <ClInclude Include="Source\StubSystem.h">
       <Filter>Engine\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DemoScene.h">
-      <Filter>Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlatformSystem.h">
       <Filter>Engine\Systems\Platform</Filter>
@@ -315,6 +276,9 @@
     </ClInclude>
     <ClInclude Include="Source\ScoreSystem.h">
       <Filter>Game\Systems\Score System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Component.h">
+      <Filter>Engine\Entities\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

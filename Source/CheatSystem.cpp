@@ -16,12 +16,9 @@
 #include "CheatSystem.h"
 #include "Level1Scene.h"
 #include "Level2Scene.h"
-#include "DemoScene.h"
-#include "SandboxScene.h"
 #include "DGL.h"
 #include "SceneSystem.h"
-#include "AsteroidsScene.h"
-#include "OmegaScene.h"
+
 
 //------------------------------------------------------------------------------
 // Private Constants:
@@ -72,10 +69,6 @@ static const CheatSystemKeyBinding keyBindings[] =
 {
 	{'1', Level1SceneGetInstance},
 	{'2', Level2SceneGetInstance},
-	{'3', AsteroidsSceneGetInstance},
-	{'4', OmegaSceneGetInstance},
-	{'9', SandboxSceneGetInstance},
-	{'0', DemoSceneGetInstance}
 };
 static CheatSystem instance =
 {

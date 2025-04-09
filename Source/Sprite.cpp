@@ -28,24 +28,7 @@
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
-typedef struct Sprite
-{
-	// The frame currently being displayed (for sprite sheets).
-	unsigned int frameIndex;
 
-	// The alpha transparency to use when drawing the sprite.
-	float alpha;
-
-	// The sprite source used when drawing (NULL = simple colored mesh).
-	const SpriteSource* spriteSource;
-
-	// The mesh used to draw the sprite.
-	const Mesh* mesh;
-
-	// Zero-terminated string used to display sprite text.
-	const char* text;
-
-} Sprite;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -61,63 +44,38 @@ typedef struct Sprite
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
-// Dynamically allocate a new Sprite component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-// (NOTE: You must initialize the 'alpha' member variable to 1.0f.)
-// Returns:
-//	 If the memory allocation was successful,
-//	   then return a pointer to the allocated memory,
-//	   else return NULL.
-Sprite* SpriteCreate(void)
-{
-	Sprite* spritePtr = calloc(1, sizeof(Sprite));
 
-	if (spritePtr)
-	{
-		spritePtr->alpha = 1.0f;
-		return spritePtr;
-	}
-	else
-	{
-		return NULL;
-	}
-}
 
-// Free the memory associated with a Sprite component.
-// (NOTE: The Sprite pointer must be set to NULL.)
-// Params:
-//	 sprite = Pointer to the Sprite pointer.
-void SpriteFree(Sprite** sprite)
+Sprite::Sprite()
 {
-	if (sprite)
-	{
-		free(*sprite);
-		*sprite = NULL;
-	}
+	alpha = 1.0f;
+	frameIndex = 0;
+	mType = cSprite;
 }
 
 
-// Dynamically allocate a clone of an existing Sprite.
-// (Hint: Perform a shallow copy of the member variables.)
-// Params:
-//	 other = Pointer to the component to be cloned.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned component,
-//	   else return NULL.
-Sprite* SpriteClone(const Sprite* other)
+Sprite::Sprite(const Sprite& other)
 {
-	if (other)
-	{
-		Sprite* newSprite = calloc(1, sizeof(Sprite));
 
-		if (newSprite)
-		{
-			*newSprite = *other;
-			return newSprite;
-		}
-	}
-	return NULL;
+	mType = other.mType;
+
+	mParent = other.mParent;
+
+	frameIndex = other.frameIndex;
+
+	alpha = other.alpha;
+
+	spriteSource = other.spriteSource;
+
+	mesh = other.mesh;
+
+	text = other.text;
+}
+
+
+Sprite::~Sprite()
+{
+
 }
 
 
@@ -127,20 +85,15 @@ Sprite* SpriteClone(const Sprite* other)
 // Params:
 //	 sprite = Pointer to the Sprite component.
 //	 stream = The data stream used for reading.
-void SpriteRead(Sprite* sprite, Stream stream)
+void Sprite::Read(Stream stream)
 {
-	if (sprite)
-	{
-		sprite->frameIndex = StreamReadInt(stream);
-		sprite->alpha = StreamReadFloat(stream);
-		const char* meshName = StreamReadToken(stream);
-		const Mesh* builtMesh = MeshLibraryBuild(meshName);
-		SpriteSetMesh(sprite, builtMesh);
+	frameIndex = StreamReadInt(stream);
+	alpha = StreamReadFloat(stream);
+	const char* meshName = StreamReadToken(stream);
+	mesh = MeshLibraryBuild(meshName);
 
-		const char* sourceName = StreamReadToken(stream);
-		const SpriteSource* spriteSource  = SpriteSourceLibraryBuild(sourceName);
-		SpriteSetSpriteSource(sprite, spriteSource);
-	}
+	const char* sourceName = StreamReadToken(stream);
+	spriteSource = SpriteSourceLibraryBuild(sourceName);
 }
 
 
@@ -148,30 +101,29 @@ void SpriteRead(Sprite* sprite, Stream stream)
 // Params:
 //	 sprite = Pointer to the Sprite component.
 //   transform = Pointer to the Transform component.
-void SpriteRender(const Sprite* sprite, Transform* transform)
+void Sprite::Render(Transform* transform) const
 {
-   	if (sprite && sprite->mesh)
+   	if (mesh)
 	{
-
-		if (sprite->spriteSource)
+		if (spriteSource)
 		{
 			DGL_Graphics_SetShaderMode(DGL_PSM_TEXTURE, DGL_VSM_DEFAULT);
-			SpriteSourceSetTexture(sprite->spriteSource);
-			SpriteSourceSetTextureOffset(sprite->spriteSource, sprite->frameIndex);
+			spriteSource->SetTexture();
+			spriteSource->SetTextureOffset(frameIndex);
 
 		}
 		else
 		{
 			DGL_Graphics_SetShaderMode(DGL_PSM_COLOR, DGL_VSM_DEFAULT);
 		}
-		DGL_Graphics_SetCB_Alpha(sprite->alpha);
+		DGL_Graphics_SetCB_Alpha(alpha);
 		DGL_Color tintColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 		DGL_Graphics_SetCB_TintColor(&tintColor);
 
-		if (sprite->text == NULL)
+		if (text == NULL)
 		{
 			DGL_Graphics_SetCB_TransformMatrix(TransformGetMatrix(transform));
-			MeshRender(sprite->mesh);
+			MeshRender(mesh);
 		}
 		else
 		{
@@ -180,14 +132,14 @@ void SpriteRender(const Sprite* sprite, Transform* transform)
 			Matrix2D translationMatrix;
 			Matrix2DTranslate(&translationMatrix, transformScale.x, 0.0f);
 
-			const char* spriteText = sprite->text;
+			const char* spriteText = text;
 
 			while (*spriteText)
 			{
 				int currentIndex = *spriteText - ' ';
-				SpriteSourceSetTextureOffset(sprite->spriteSource, currentIndex);
+				spriteSource->SetTextureOffset(currentIndex);
 				DGL_Graphics_SetCB_TransformMatrix(&matrix);
-				MeshRender(sprite->mesh);
+				MeshRender(mesh);
 				++spriteText;
 				Matrix2DConcat(&matrix, &translationMatrix, &matrix);
 			}
@@ -204,16 +156,9 @@ void SpriteRender(const Sprite* sprite, Transform* transform)
 //	 If the pointer is valid,
 //		then return the Sprite's alpha value (a value between 0.0f and 1.0f),
 //		else return 0.0f.
-float SpriteGetAlpha(const Sprite* sprite)
+float Sprite::GetAlpha()
 {
-	if (sprite)
-	{
-		return sprite->alpha;
-	}
-	else
-	{
-		return 0.0f;
-	}
+	return alpha;
 }
 
 
@@ -224,14 +169,12 @@ float SpriteGetAlpha(const Sprite* sprite)
 // Params:
 //	 sprite = Pointer to the Sprite component.
 //   alpha = The Sprite's new alpha value.
-void SpriteSetAlpha(Sprite* sprite, float alpha)
+void Sprite::SetAlpha(float inAlpha)
 {
-	if (sprite)
-	{
-	alpha = min(1.0f, alpha);
-	alpha = max(0.0f, alpha);
-	sprite->alpha = alpha;
-	}
+	
+	inAlpha = min(1.0f, inAlpha);
+	inAlpha = max(0.0f, inAlpha);
+	alpha = inAlpha;
 }
 
 
@@ -244,19 +187,14 @@ void SpriteSetAlpha(Sprite* sprite, float alpha)
 // ADDITIONAL REQUIREMENTS:
 // - This function must make the following function call:
 //     TraceMessage("SpriteSetFrame: frame index = %d", frameIndex);
-void SpriteSetFrame(Sprite* sprite, unsigned int frameIndex)
+void Sprite::SetFrame(unsigned int inFrameIndex)
 {
-	if (sprite)
+	if (frameIndex >= 0 && frameIndex < spriteSource->GetFrameCount())
 	{
+		frameIndex = inFrameIndex;
 
-		if (frameIndex >= 0 && frameIndex < SpriteSourceGetFrameCount(sprite->spriteSource))
-		{
-			sprite->frameIndex = frameIndex;
-
-			TraceMessage("SpriteSetFrame: frame index = %d", frameIndex);
-			return;
-		}
-
+		TraceMessage("SpriteSetFrame: frame index = %d", inFrameIndex);
+		return;
 	}
 
 }
@@ -268,12 +206,10 @@ void SpriteSetFrame(Sprite* sprite, unsigned int frameIndex)
 // Params:
 //	 sprite = Pointer to the Sprite component.
 //   mesh = Pointer to a Mesh object.
-void SpriteSetMesh(Sprite* sprite, const Mesh* mesh)
+void Sprite::SetMesh(const Mesh* inMesh)
 {
-	if (sprite && mesh)
-	{
-		sprite->mesh = mesh;
-	}
+
+	mesh = inMesh;
 }
 
 
@@ -283,12 +219,9 @@ void SpriteSetMesh(Sprite* sprite, const Mesh* mesh)
 // Params:
 //	 sprite = Pointer to the Sprite component.
 //	 spriteSource = Pointer to a SpriteSource (this pointer may be NULL).
-void SpriteSetSpriteSource(Sprite* sprite, const SpriteSource* spriteSource)
+void Sprite::SetSpriteSource(const SpriteSource* inSpriteSource)
 {
-	if (sprite && spriteSource)
-	{
-		sprite->spriteSource = spriteSource;
-	}
+	spriteSource = inSpriteSource;
 }
 
 
@@ -300,12 +233,9 @@ void SpriteSetSpriteSource(Sprite* sprite, const SpriteSource* spriteSource)
 // Params:
 //	 sprite = Pointer to the Sprite component.
 //	 text = Pointer to a zero-terminated array of characters.
-void SpriteSetText(Sprite* sprite, const char* text)
+void Sprite::SetText(const char* inText)
 {
-	if (sprite)
-	{
-		sprite->text = text;
-	}
+	text = inText;
 }
 
 

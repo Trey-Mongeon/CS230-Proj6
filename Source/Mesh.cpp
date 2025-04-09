@@ -35,7 +35,7 @@ typedef struct Mesh
 	char name[32];
 
 	// Pointer to the DGL_Mesh resource.
-	const DGL_Mesh* meshResource;
+	DGL_Mesh* meshResource;
 
 	// The draw mode to use when rendering the mesh (Usually "DGL_DM_TRIANGLELIST").
 	DGL_DrawMode drawMode;
@@ -69,7 +69,7 @@ typedef struct Mesh
 //	   else return NULL.
 Mesh* MeshCreate()
 {
-	Mesh *meshPtr = calloc(1, sizeof(Mesh));
+	Mesh* meshPtr = new Mesh;
 	if (meshPtr)
 	{
 		return meshPtr;
@@ -175,14 +175,25 @@ void MeshBuildQuad(Mesh* mesh, float xHalfSize, float yHalfSize, float uSize, fl
 
 	DGL_Color blackMesh = { 0.0f, 0.0f, 0.0f, 1.0f };
 
+	DGL_Vec2 negHalfSize = { -xHalfSize, -yHalfSize };
+	DGL_Vec2 HalfSize = { xHalfSize,  yHalfSize };
+	DGL_Vec2 negYHalfSize = { xHalfSize, -yHalfSize };
+	DGL_Vec2 negXHalfSize = { -xHalfSize,  yHalfSize };
+
+	DGL_Vec2 v0Size = { 0.0f, vSize };
+	DGL_Vec2 zeros = { 0.0f, 0.0f };
+	DGL_Vec2 uvSize = { uSize, vSize };
+	DGL_Vec2 uSize0 = { uSize, 0.0f };
+
+
 	DGL_Graphics_AddTriangle(
-		&(DGL_Vec2){ -xHalfSize, -yHalfSize }, &blackMesh, &(DGL_Vec2){ 0.0f, vSize },
-		&(DGL_Vec2){  xHalfSize,  yHalfSize }, &blackMesh, &(DGL_Vec2){ uSize, 0.0f },
-		&(DGL_Vec2){  xHalfSize, -yHalfSize }, &blackMesh, &(DGL_Vec2){ uSize, vSize });
+		&negHalfSize, &blackMesh, &v0Size,
+		&HalfSize, &blackMesh, &uSize0,
+		&negYHalfSize, &blackMesh, &HalfSize);
 	DGL_Graphics_AddTriangle(
-		&(DGL_Vec2){ -xHalfSize, -yHalfSize }, &blackMesh, &(DGL_Vec2){ 0.0f, vSize },
-		&(DGL_Vec2){ -xHalfSize,  yHalfSize }, &blackMesh, &(DGL_Vec2){ 0.0f, 0.0f },
-		&(DGL_Vec2){  xHalfSize,  yHalfSize }, &blackMesh, &(DGL_Vec2){ uSize, 0.0f });
+		&negHalfSize, &blackMesh, &v0Size,
+		&negXHalfSize, &blackMesh, &zeros,
+		&HalfSize, &blackMesh, &uSize0);
 
 	mesh->meshResource = DGL_Graphics_EndMesh();
 }
@@ -204,10 +215,18 @@ void MeshBuildSpaceship(Mesh* mesh)
 	strcpy_s(mesh->name, _countof(mesh->name), "Spaceship");
 
 	DGL_Graphics_StartMesh();
+
+	DGL_Vec2 p5TO0 = { 0.5f, 0.0f };
+	DGL_Vec2 zTO1 = { 0.0f, 1.0f };
+	DGL_Vec2 negP5 = { -0.5, -0.5 };
+	DGL_Vec2 oneTO0 = { 1.0f, 0.0f };
+	DGL_Vec2 negToPosP5 = { -0.5f, 0.5f };
+	DGL_Vec2 ones = { 1.0f, 1.0f };
+
 	DGL_Graphics_AddTriangle(
-		&(DGL_Vec2){ 0.5f, 0.0f }, &DGL_Color_Yellow, &(DGL_Vec2){ 0.0f, 1.0f },
-		&(DGL_Vec2){  -0.5f,  -0.5f }, &DGL_Color_Red, &(DGL_Vec2){ 1.0f, 0.0f },
-		&(DGL_Vec2){  -0.5f, 0.5f }, &DGL_Color_Red, &(DGL_Vec2){ 1.0f, 1.0f });
+		&p5TO0, &DGL_Color_Yellow, &zTO1,
+		&negP5, &DGL_Color_Red, &oneTO0,
+		&negToPosP5, &DGL_Color_Red, &ones);
 
 	 mesh->meshResource = DGL_Graphics_EndMesh();
 }

@@ -175,31 +175,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Animation.cpp" />
-    <ClCompile Include="Source\AsteroidsScene.cpp" />
-    <ClCompile Include="Source\Behavior.cpp" />
-    <ClCompile Include="Source\BehaviorAsteroid.cpp" />
-    <ClCompile Include="Source\BehaviorBullet.cpp" />
-    <ClCompile Include="Source\BehaviorHudText.cpp" />
-    <ClCompile Include="Source\BehaviorSpaceship.cpp" />
     <ClCompile Include="Source\CheatSystem.cpp" />
-    <ClCompile Include="Source\Collider.cpp" />
-    <ClCompile Include="Source\ColliderCircle.cpp" />
-    <ClCompile Include="Source\ColliderLine.cpp" />
+    <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\Engine.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
-    <ClCompile Include="Source\EntityContainer.cpp" />
     <ClCompile Include="Source\EntityFactory.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Matrix2D.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshLibrary.cpp" />
-    <ClCompile Include="Source\OmegaScene.cpp" />
     <ClCompile Include="Source\Physics.cpp" />
     <ClCompile Include="Source\PlatformSystem.cpp" />
     <ClCompile Include="Source\Random.cpp" />
     <ClCompile Include="Source\SandboxScene.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
-    <ClCompile Include="Source\DemoScene.cpp" />
     <ClCompile Include="Source\Level1Scene.cpp" />
     <ClCompile Include="Source\Level2Scene.cpp" />
     <ClCompile Include="Source\SceneSystem.cpp" />
@@ -217,7 +206,6 @@
     <ClCompile Include="Source\Stub.cpp" />
     <ClCompile Include="Source\StubScene.cpp" />
     <ClCompile Include="Source\StubSystem.cpp" />
-    <ClCompile Include="Source\Teleporter.cpp" />
     <ClCompile Include="Source\Trace.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\Vector2D.cpp" />
@@ -234,6 +222,7 @@
     <ClInclude Include="Source\Collider.h" />
     <ClInclude Include="Source\ColliderCircle.h" />
     <ClInclude Include="Source\ColliderLine.h" />
+    <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\Engine.h" />
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\EntityContainer.h" />
@@ -247,7 +236,6 @@
     <ClInclude Include="Source\Random.h" />
     <ClInclude Include="Source\SandboxScene.h" />
     <ClInclude Include="Source\Scene.h" />
-    <ClInclude Include="Source\DemoScene.h" />
     <ClInclude Include="Source\Level1Scene.h" />
     <ClInclude Include="Source\Level2Scene.h" />
     <ClInclude Include="Source\SceneSystem.h" />

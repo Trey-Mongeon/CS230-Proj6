@@ -30,7 +30,7 @@ typedef struct MeshLibrary
 	// A list of all currently loaded meshes.
 	// This list can be a fixed-length array (minimum size of 10 entries)
 	// or a dynamically-sized array, such as a linked list.
-	const Mesh* meshList[16];
+	Mesh* meshList[16];
 
 } MeshLibrary;
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ void MeshLibraryFreeAll()
 //------------------------------------------------------------------------------
 
 
-static void MeshLibraryAdd(const Mesh* mesh)
+static void MeshLibraryAdd( Mesh* mesh)
 {
 	if (mesh == NULL)
 	{

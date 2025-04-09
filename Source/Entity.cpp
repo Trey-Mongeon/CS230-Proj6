@@ -17,14 +17,7 @@
 #include "Stream.h"
 #include "string.h"
 #include "Animation.h"
-#include "Behavior.h"
-#include "BehaviorBullet.h"
-#include "BehaviorSpaceship.h"
-#include "Collider.h"
-#include "BehaviorAsteroid.h"
-#include "BehaviorHudText.h"
-#include "ColliderCircle.h"
-#include "ColliderLine.h"
+
 
 //------------------------------------------------------------------------------
 // Private Constants:
@@ -59,11 +52,6 @@ typedef struct Entity
 
 	Animation* animation;
 
-	Behavior* behavior;
-
-	// Pointer to an attached Collider component.
-	Collider* collider;
-
 	bool isDestroyed;
 
 } Entity;
@@ -90,7 +78,7 @@ typedef struct Entity
 //	   else return NULL.
 Entity* EntityCreate(void)
 {
-	Entity* entityPtr = calloc(1, sizeof(Entity));
+	Entity* entityPtr = new Entity;
 	if (entityPtr)
 	{
 		return entityPtr;
@@ -114,8 +102,6 @@ void EntityFree(Entity** entity)
 		PhysicsFree(&(*entity)->physics);
 		TransformFree(&(*entity)->transform);
 		AnimationFree(&(*entity)->animation);
-		BehaviorFree(&(*entity)->behavior);
-		ColliderFree(&(*entity)->collider);
 		free(*entity);
 
    		*entity = NULL;
@@ -178,40 +164,7 @@ void EntityDestroy(Entity* entity)
 }
 
 
-// Attach a Behavior component to an Entity.
-// (NOTE: This function must also set the Behavior component's parent pointer
-//	  by calling the BehaviorSetParent() function.)
-// Params:
-//	 entity = Pointer to the Entity.
-//   behavior = Pointer to the Behavior component to be attached.
-void EntityAddBehavior(Entity* entity, Behavior* behavior)
-{
-	if (entity && behavior)
-	{
-		BehaviorSetParent(behavior, entity);
-		entity->behavior = behavior;
-	}
-}
 
-
-// Get the Behavior component attached to an Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-// Returns:
-//	 If the Entity pointer is valid,
-//		then return a pointer to the attached Behavior component,
-//		else return NULL.
-Behavior* EntityGetBehavior(const Entity* entity)
-{
-	if (entity)
-	{
-		return entity->behavior;
-	}
-	else
-	{
-		return NULL;
-	}
-}
 
 
 // Dynamically allocate a clone of an existing Entity.
@@ -229,17 +182,15 @@ Entity* EntityClone(const Entity* other)
 {
 	if (other)
 	{
-		Entity* entity = calloc(1, sizeof(Entity));
+		Entity* entity = new Entity;
 
 		if (entity)
 		{
 			*entity = *other;
 			EntityAddAnimation(entity, AnimationClone(other->animation));
-			EntityAddBehavior(entity, BehaviorClone(other->behavior));
 			EntityAddPhysics(entity, PhysicsClone(other->physics));
 			EntityAddSprite(entity, SpriteClone(other->sprite));
 			EntityAddTransform(entity, TransformClone(other->transform));
-			EntityAddCollider(entity, ColliderClone(other->collider));
 		}
 		return entity;
 	}
@@ -274,7 +225,7 @@ void EntityRead(Entity* entity, Stream stream)
 			}
 			else if (strstr(token, "Sprite"))
 			{
-				Sprite* spritePtr = SpriteCreate();
+				Sprite* spritePtr = SpriteCreate();           /// PLACES WHERE CREATE IS CALLED NEW IS CALLED NOW - FREE IS DELETE
 				SpriteRead(spritePtr, stream);
 				entity->sprite = spritePtr;
 			}
@@ -283,42 +234,6 @@ void EntityRead(Entity* entity, Stream stream)
 				Animation* animationPtr = AnimationCreate();
 				AnimationRead(animationPtr, stream);
 				EntityAddAnimation(entity, animationPtr);
-			}
-			else if (strstr(token, "BehaviorSpaceship"))
-			{
-				Behavior* spaceshipBehavior = BehaviorSpaceshipCreate();
-				BehaviorRead(spaceshipBehavior, stream);
-				EntityAddBehavior(entity, spaceshipBehavior);
-			}
-			else if (strstr(token, "BehaviorBullet"))
-			{
-				Behavior* bulletBehavior = BehaviorBulletCreate();
-				BehaviorRead(bulletBehavior, stream);
-				EntityAddBehavior(entity, bulletBehavior);
-			}
-			else if (strstr(token, "BehaviorAsteroid"))
-			{
-				Behavior* asteroidBehavior = BehaviorAsteroidCreate();
-				BehaviorRead(asteroidBehavior, stream);
-				EntityAddBehavior(entity, asteroidBehavior);
-			}
-			else if (strstr(token, "BehaviorHudText"))
-			{
-				Behavior* hudBehavior = BehaviorHudTextCreate();
-				BehaviorHudTextRead(hudBehavior, stream);
-				EntityAddBehavior(entity, hudBehavior);
-			}
-			else if (strstr(token, "ColliderCircle"))
-			{
-				Collider* circleCollider = ColliderCircleCreate();
-				ColliderCircleRead(circleCollider, stream);
-				EntityAddCollider(entity, circleCollider);
-			}
-			else if (strstr(token, "ColliderLine"))
-			{
-				Collider* lineCollider = ColliderLineCreate();
-				ColliderLineRead(lineCollider, stream);
-				EntityAddCollider(entity, lineCollider);
 			}
 			else if(token[0] == '\0')
 			{ 
@@ -329,41 +244,6 @@ void EntityRead(Entity* entity, Stream stream)
 }
 
 
-// Attach a Collider component to an Entity.
-// (NOTE: This function must also set the Collider component's parent pointer
-//	  by calling the ColliderSetParent() function.)
-// Params:
-//	 entity = Pointer to the Entity.
-//   collider = Pointer to the Collider component to be attached.
-void EntityAddCollider(Entity* entity, Collider* collider)
-{
-	if (entity && collider)
-	{
-		entity->collider = collider;
-		ColliderSetParent(collider, entity);
-	}
-}
-
-
-// Get the Collider component attached to an Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-// Returns:
-//	 If the Entity pointer is valid,
-//		then return a pointer to the attached Collider component,
-//		else return NULL.
-Collider* EntityGetCollider(const Entity* entity)
-{
-	if (entity)
-	{
-		return entity->collider;
-	}
-	else
-	{
-		return NULL;
-	}
-}
-
 
 // Attach an Animation component to an Entity.
 // (NOTE: This function must set the animation component's parent pointer by
@@ -371,12 +251,12 @@ Collider* EntityGetCollider(const Entity* entity)
 // Params:
 //	 entity = Pointer to the Entity.
 //   animation = Pointer to the Animation component to be attached.
-void EntityAddAnimation(Entity* entity, Animation* animation)
+void EntityAddAnimation(Entity* entity, Animation* inAnimation)
 {
-	if (entity && animation)
+	if (entity && inAnimation)
 	{
-	entity->animation = animation;
-	AnimationSetParent(animation, entity);
+		entity->animation = inAnimation;
+		entity->animation->SetParent(entity); // this good, do this for others
 	}
 }
 
@@ -543,10 +423,6 @@ void EntityUpdate(Entity* entity, float dt)
 		if (entity->animation)
 		{
 			AnimationUpdate(entity->animation, dt);
-		}
-		if (entity->behavior)
-		{
-			BehaviorUpdate(entity->behavior, dt);
 		}
 		if (entity->transform && entity->physics)
 		{

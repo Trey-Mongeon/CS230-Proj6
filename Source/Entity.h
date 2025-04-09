@@ -23,13 +23,11 @@
 // Forward References:
 //------------------------------------------------------------------------------
 
-typedef struct Animation Animation;
-typedef struct Behavior Behavior;
-typedef struct Collider Collider;
-typedef struct Entity Entity;
-typedef struct Physics Physics;
-typedef struct Sprite Sprite;
-typedef struct Transform Transform;
+typedef class Animation Animation;
+typedef class Entity Entity;
+typedef class Physics Physics;
+typedef class Sprite Sprite;
+typedef class Transform Transform;
 typedef FILE* Stream;
 
 //------------------------------------------------------------------------------
@@ -153,22 +151,6 @@ bool EntityIsDestroyed(const Entity* entity);
 //   animation = Pointer to the Animation component to be attached.
 void EntityAddAnimation(Entity* entity, Animation* animation);
 
-// Attach a Behavior component to an Entity.
-// (NOTE: This function must also set the Behavior component's parent pointer
-//	  by calling the BehaviorSetParent() function.)
-// Params:
-//	 entity = Pointer to the Entity.
-//   behavior = Pointer to the Behavior component to be attached.
-void EntityAddBehavior(Entity* entity, Behavior* behavior);
-
-// Attach a Collider component to an Entity.
-// (NOTE: This function must also set the Collider component's parent pointer
-//	  by calling the ColliderSetParent() function.)
-// Params:
-//	 entity = Pointer to the Entity.
-//   collider = Pointer to the Collider component to be attached.
-void EntityAddCollider(Entity* entity, Collider* collider);
-
 // Attach a Physics component to an Entity.
 // Params:
 //	 entity = Pointer to the Entity.
@@ -226,23 +208,9 @@ bool EntityIsNamed(const Entity* entity, const char* name);
 //		else return NULL.
 Animation* EntityGetAnimation(const Entity* entity);
 
-// Get the Behavior component attached to an Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-// Returns:
-//	 If the Entity pointer is valid,
-//		then return a pointer to the attached Behavior component,
-//		else return NULL.
-Behavior* EntityGetBehavior(const Entity* entity);
 
-// Get the Collider component attached to an Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-// Returns:
-//	 If the Entity pointer is valid,
-//		then return a pointer to the attached Collider component,
-//		else return NULL.
-Collider* EntityGetCollider(const Entity* entity);
+
+
 
 // Get the Physics component attached to an Entity.
 // Params:

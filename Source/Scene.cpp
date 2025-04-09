@@ -14,7 +14,6 @@
 #include "trace.h"
 #include "Scene.h"
 #include "SceneSystem.h"
-#include "EntityContainer.h"
 #include "EntityFactory.h"
 #include "MeshLibrary.h"
 #include "SpriteSourceLibrary.h"
@@ -39,7 +38,7 @@
 // Private Variables:
 //------------------------------------------------------------------------------
 
-static EntityContainer* entities = NULL;
+//static EntityContainer* entities = NULL;
 
 //------------------------------------------------------------------------------
 // Private Function Declarations:
@@ -76,7 +75,8 @@ bool SceneIsValid(const Scene* scene)
 //		else return NULL.
 Entity* SceneFindEntityByName(const char* entityName)
 {
-	return EntityContainerFindByName(entities, entityName);
+	UNREFERENCED_PARAMETER(entityName);
+	return NULL;
 }
 
 
@@ -86,7 +86,7 @@ Entity* SceneFindEntityByName(const char* entityName)
 //   entity = Pointer to the Entity to be added.
 void SceneAddEntity(Entity* entity)
 {
-	EntityContainerAddEntity(entities, entity);
+	UNREFERENCED_PARAMETER(entity);
 }
 
 
@@ -99,7 +99,6 @@ void SceneLoad(const Scene* scene)
 		// TODO: Call TraceMessage, passing the format string "%s: Load" and the name of the scene.
 		TraceMessage("%s: Load", scene->name);
 
-		entities = EntityContainerCreate();
 		MeshLibraryInit();
 		SpriteSourceLibraryInit();
 
@@ -131,9 +130,6 @@ void SceneUpdate(const Scene* scene, float dt)
 		TraceMessage("%s: Update", scene->name);
 		// Execute the Update function.
 		(*scene->update)(dt);
-
-		EntityContainerUpdateAll(entities, dt);
-		EntityContainerCheckCollisions(entities);
 	}
 }
 
@@ -148,7 +144,6 @@ void SceneRender(const Scene* scene)
 		// Execute the Render function.
 		(*scene->render)();
 
-		EntityContainerRenderAll(entities);
 	}
 }
 
@@ -163,7 +158,6 @@ void SceneExit(const Scene* scene)
 		// Execute the Exit function.
 		(*scene->exit)();
 
-		EntityContainerFreeAll(entities);
 		EntityFactoryFreeAll();
 	}
 }
@@ -180,7 +174,6 @@ void SceneUnload(const Scene* scene)
 		(*scene->unload)();
 
 		MeshLibraryFreeAll();
-		EntityContainerFree(&entities);
 		SpriteSourceLibraryFreeAll();
 	}
 }

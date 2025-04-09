@@ -16,7 +16,6 @@
 #include "Sprite.h"
 #include "Transform.h"
 #include "Physics.h"
-#include "EntityContainer.h"
 
 //------------------------------------------------------------------------------
 // Private Constants:
@@ -33,7 +32,7 @@
 //------------------------------------------------------------------------------
 // Private Variables:
 //------------------------------------------------------------------------------
-static EntityContainer* archetypes = NULL;
+//static EntityContainer* archetypes = NULL;
 //------------------------------------------------------------------------------
 // Private Function Declarations:
 //------------------------------------------------------------------------------
@@ -55,40 +54,25 @@ Entity* EntityFactoryBuild(const char* entityName)
 {
 	if (entityName)
 	{
-		if(archetypes == NULL)
+		
+		char pathName[FILENAME_MAX] = "";
+
+		sprintf_s(pathName, _countof(pathName), "Data/%s.txt", entityName);
+
+		Stream stream = StreamOpen(pathName);
+
+		if (stream)
 		{
-			archetypes = EntityContainerCreate();
-		}
+			const char* token = StreamReadToken(stream);
 
-		Entity* foundEntity = EntityContainerFindByName(archetypes, entityName);
-
-		if (foundEntity == NULL)
-		{
-			char pathName[FILENAME_MAX] = "";
-
-			sprintf_s(pathName, _countof(pathName), "Data/%s.txt", entityName);
-
-			Stream stream = StreamOpen(pathName);
-
-			if (stream)
+			if (!strncmp("Entity", token, _countof("Entity")))
 			{
-				const char* token = StreamReadToken(stream);
+				Entity* entityPtr = EntityCreate();
+				EntityRead(entityPtr, stream);
 
-				if (!strncmp("Entity", token, _countof("Entity")))
-				{
-					Entity* entityPtr = EntityCreate();
-					EntityRead(entityPtr, stream);
-					EntityContainerAddEntity(archetypes, entityPtr);
-
-					StreamClose(&stream);
-					return EntityClone(entityPtr);
-				}
+				StreamClose(&stream);
+				return EntityClone(entityPtr);
 			}
-		}
-		else
-		{
-			Entity* clonedEntity = EntityClone(foundEntity);
-			return clonedEntity;
 		}
 	}
 	return NULL;
@@ -100,10 +84,7 @@ Entity* EntityFactoryBuild(const char* entityName)
 //    function must be called.)
 void EntityFactoryFreeAll()
 {
-	if (archetypes)
-	{
-		EntityContainerFreeAll(archetypes);
-	}
+	//fard
 }
 
 

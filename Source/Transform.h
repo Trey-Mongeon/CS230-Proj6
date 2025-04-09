@@ -14,7 +14,8 @@
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
-
+#include "Component.h"
+#include "Vector2D.h"
 //------------------------------------------------------------------------------
 
 
@@ -24,8 +25,6 @@
 //------------------------------------------------------------------------------
 
 typedef struct DGL_Mat4 Matrix2D;
-typedef struct Transform Transform;
-typedef struct DGL_Vec2 Vector2D;
 typedef FILE* Stream;
 
 //------------------------------------------------------------------------------
@@ -36,11 +35,7 @@ typedef FILE* Stream;
 // Public Structures:
 //------------------------------------------------------------------------------
 
-// An example of the structure to be defined in Transform.c.
-#if 0
-// You are free to change the contents of this structure as long as you do not
-//   change the public interface declared in the header.
-typedef struct Transform
+class Transform : public Component
 {
 	// The translation (or world position) of an entity.
 	Vector2D	translation;
@@ -52,18 +47,10 @@ typedef struct Transform
 	// (Hint: This should be initialized to (1, 1).)
 	Vector2D	scale;
 
-	// True if the transformation matrix needs to be recalculated.
-	// (Hint: This should be initialized to true.)
-	// (Hint: This should be set to true when the Transform data changes.)
-	bool	isDirty;
-
-	// The transformation matrix resulting from concatenating the matrices
-	//   representing the translation, rotation, and scale transformations.
-	//	 (e.g. matrix = Translation*Rotation*Scale matrices)
 	Matrix2D	matrix;
 
-} Transform;
-#endif
+	bool	isDirty;
+};
 
 //------------------------------------------------------------------------------
 // Public Variables:
