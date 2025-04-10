@@ -38,29 +38,38 @@
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
-// Dynamically allocate a new Transform component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-// (Hint: You must initialize the scale values to non-zero values.)
-// Returns:
-//	 If the memory allocation was successful,
-//	   then return a pointer to the allocated memory,
-//	   else return NULL.
-Transform* TransformCreate(void)
+
+Transform::Transform()
 {
-	Transform* transformPtr = new Transform;
+	scale.x = 1;
+	scale.y = 1;
+	isDirty = true;
+	rotation = 0;
+	translation.x = 0;
+	translation.y = 0;
+	matrix = *GetMatrix();
+}
 
-	if (transformPtr)
-	{
-		transformPtr->scale.x = 1;
-		transformPtr->scale.y = 1;
-		transformPtr->isDirty = TRUE;
+Transform::Transform(const Transform* other)
+{
+	scale.x = other->scale.x;
 
-		return transformPtr;
-	}
-	else
-	{
-		return NULL;
-	}
+	scale.y = other->scale.y;
+
+	isDirty = other->isDirty;
+	
+	rotation = other->rotation;
+
+	translation.x = other->translation.x;
+
+	translation.y = other->translation.y;
+
+	matrix = other->matrix;
+}
+
+Transform::~Transform()
+{
+
 }
 
 // Free the memory associated with a Transform component.
@@ -108,11 +117,11 @@ Transform* TransformClone(const Transform* other)
 // Params:
 //	 transform = Pointer to the Transform component.
 //	 stream = The data stream used for reading.
-void TransformRead(Transform* transform, Stream stream)
+void Transform::Read(Stream stream)
 {
-	StreamReadVector2D(stream, &transform->translation);
-	transform->rotation = StreamReadFloat(stream);
-	StreamReadVector2D(stream, &transform->scale);
+	StreamReadVector2D(stream, &translation);
+	rotation = StreamReadFloat(stream);
+	StreamReadVector2D(stream, &scale);
 }
 
 // Get the translation of a Transform component.
@@ -122,16 +131,9 @@ void TransformRead(Transform* transform, Stream stream)
 //	 If the Transform pointer is valid,
 //		then return a pointer to the component's translation,
 //		else return a NULL pointer.
-const Vector2D* TransformGetTranslation(const Transform* transform)
+const Vector2D* Transform::GetTranslation() const
 {
-	if (transform)
-	{
-		return &transform->translation;
-	}
-	else
-	{
-		return NULL;
-	}
+	return &translation;
 }
 
 // Get the rotation value of a Transform component.
@@ -141,16 +143,9 @@ const Vector2D* TransformGetTranslation(const Transform* transform)
 //	 If the Transform pointer is valid,
 //		then return the component's rotation value (in radians),
 //		else return 0.0f.
-float TransformGetRotation(const Transform* transform)
+float Transform::GetRotation() const
 {
-	if (transform)
-	{
-		return transform->rotation;
-	}
-	else
-	{
-		return 0.0f;
-	}
+	return rotation;
 }
 
 // Get the scale of a Transform component.
@@ -160,16 +155,9 @@ float TransformGetRotation(const Transform* transform)
 //	 If the Transform pointer is valid,
 //		then return a pointer to the component's scale,
 //		else return a NULL pointer.
-const Vector2D* TransformGetScale(const Transform* transform)
+const Vector2D* Transform::GetScale() const
 {
-	if (transform)
-	{
-		return &transform->scale;
-	}
-	else
-	{
-		return NULL;
-	}
+	return &scale;
 }
 
 
@@ -177,13 +165,13 @@ const Vector2D* TransformGetScale(const Transform* transform)
 // Params:
 //	 transform = Pointer to the Transform component.
 //	 translation = Pointer to the new translation.
-void TransformSetTranslation(Transform* transform, const Vector2D* translation)
+void Transform::SetTranslation(const Vector2D* inTranslation)
 {
-	if (transform && translation)
+	if (inTranslation)
 	{
-		transform->translation.x = translation->x;
-		transform->translation.y = translation->y;
-		transform->isDirty = TRUE;
+		translation.x = inTranslation->x;
+		translation.y = inTranslation->y;
+		isDirty = TRUE;
 	}
 }
 
@@ -192,13 +180,10 @@ void TransformSetTranslation(Transform* transform, const Vector2D* translation)
 // Params:
 //	 transform = Pointer to the Transform component.
 //	 rotation = The rotation value (in radians).
-void TransformSetRotation(Transform* transform, float rotation)
+void Transform::SetRotation(float inRotation)
 {
-	if (transform)
-	{
-		transform->rotation = rotation;
-		transform->isDirty = TRUE;
-	}
+	rotation = inRotation;
+	isDirty = TRUE;
 }
 
 
@@ -206,14 +191,11 @@ void TransformSetRotation(Transform* transform, float rotation)
 // Params:
 //	 transform = Pointer to the Transform component.
 //	 translation = Pointer to the new scale.
-void TransformSetScale(Transform* transform, const Vector2D* scale)
+void Transform::SetScale(const Vector2D* inScale)
 {
-	if (transform)
-	{
-		transform->scale.x = scale->x;
-		transform->scale.y = scale->y;
-		transform->isDirty = TRUE;
-	}
+	scale.x = inScale->x;
+	scale.y = inScale->y;
+	isDirty = TRUE;
 }
 
 
@@ -225,32 +207,32 @@ void TransformSetScale(Transform* transform, const Vector2D* scale)
 //	 If the Transform pointer is valid,
 //		then return a pointer to the component's matrix structure,
 //		else return a NULL pointer.
-const Matrix2D* TransformGetMatrix(Transform* transform)
+const Matrix2D* Transform::GetMatrix()
 {
-	if (transform->isDirty == TRUE)
+	if (isDirty == TRUE)
 	{
-		Matrix2D scale;
-		Matrix2DIdentity(&scale);
+		Matrix2D matrixScale;
+		Matrix2DIdentity(&matrixScale);
 
-		Matrix2D rotation;
-		Matrix2DIdentity(&rotation);
+		Matrix2D matrixRotation;
+		Matrix2DIdentity(&matrixRotation);
 
-		Matrix2D translation;
-		Matrix2DIdentity(&translation);
+		Matrix2D matrixTranslation;
+		Matrix2DIdentity(&matrixTranslation);
 
-		Matrix2DScale(&scale, transform->scale.x, transform->scale.y);
-		Matrix2DRotRad(&rotation, transform->rotation);
-		Matrix2DTranslate(&translation, transform->translation.x, transform->translation.y);
+		Matrix2DScale(&matrixScale, scale.x, scale.y);
+		Matrix2DRotRad(&matrixRotation, rotation);
+		Matrix2DTranslate(&matrixTranslation, translation.x, translation.y);
 
 		Matrix2D rotScale;
 		Matrix2DIdentity(&rotScale);
 
-		Matrix2DConcat(&rotScale, &rotation, &scale);
-		Matrix2DConcat(&transform->matrix, &translation, &rotScale);
-		transform->isDirty = FALSE;
+		Matrix2DConcat(&rotScale, &matrixRotation, &matrixScale);
+		Matrix2DConcat(&matrix, &matrixTranslation, &rotScale);
+		isDirty = FALSE;
 
 	}
-		return &transform->matrix;
+		return &matrix;
 }
 
 

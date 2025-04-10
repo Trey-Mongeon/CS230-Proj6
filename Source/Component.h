@@ -14,9 +14,16 @@
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
-#include "Entity.h"
-
 //------------------------------------------------------------------------------
+
+class Entity;
+
+
+class Component
+{
+
+	// Public Functions:
+public:
 
 enum TypeEnum
 {
@@ -26,12 +33,6 @@ enum TypeEnum
 	cAnimation,
 	cPhysics
 };
-
-class Component
-{
-
-	// Public Functions:
-public:
 
 	Component()
 	{

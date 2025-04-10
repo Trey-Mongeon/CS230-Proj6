@@ -211,9 +211,6 @@
     <ClInclude Include="Source\Sprite.h">
       <Filter>Engine\Entities\Components\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SpriteSource.h">
-      <Filter>Engine\Entities\Components\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mesh.h">
       <Filter>Engine\Entities\Components\Graphics</Filter>
     </ClInclude>
@@ -279,6 +276,9 @@
     </ClInclude>
     <ClInclude Include="Source\Component.h">
       <Filter>Engine\Entities\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SpriteSource.h">
+      <Filter>Engine\Entities\Components\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

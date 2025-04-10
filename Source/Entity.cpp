@@ -26,35 +26,7 @@
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
-typedef struct Entity
-{
-	// The name of the entity.
-	// A buffer is used to allow each entity to have a unique name.
-	// The buffer is hardcoded to an arbitrary length that will be sufficient
-	//	 for all CS230 assignments.  You may, instead, use dynamically-allocated
-	//	 arrays for this purpose but the additional complexity is unnecessary
-	//	 and it is your responsibility to ensure that the memory is successfully
-	//	 allocated and deallocated in all possible situations.
-	// [NOTE: When setting the name, use strcpy_s() to reduce the risk of
-	//	 buffer overruns. Additionally, do NOT hardcode the number "32" when
-	//	 calling this function!  Instead, use the _countof() macro to get the
-	//	 size of the "name" array.]
-	char name[32];
 
-	// Pointer to an attached physics component.
-	Physics* physics;
-
-	// Pointer to an attached sprite component.
-	Sprite* sprite;
-
-	// Pointer to an attached transform component.
-	Transform* transform;
-
-	Animation* animation;
-
-	bool isDestroyed;
-
-} Entity;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -89,6 +61,25 @@ Entity* EntityCreate(void)
 	}
 }
 
+Entity::Entity()
+{
+	isDestroyed = false;
+	memset(name, 0, 32);
+	components = { 0 };
+}
+
+Entity::Entity(const Entity* other)
+{
+	isDestroyed = other->isDestroyed;
+	// im abt to kill myself
+}
+
+Entity::~Entity()
+{
+
+}
+
+
 // Free the memory associated with an Entity.
 // (NOTE: All attached components must be freed using the corresponding Free() functions.)
 // (NOTE: The Entity pointer must be set to NULL.)
@@ -117,16 +108,12 @@ void EntityFree(Entity** entity)
 //	 If the Entity pointer is valid and the two names match,
 //		then return true,
 //		else return false.
-bool EntityIsNamed(const Entity* entity, const char* name)
+bool Entity::IsNamed(const char* inName) const
 {
-	if (entity) // instruction comments dont say to check name ptr but do in other IsNamed functions
+	if (strcmp(name, inName) == 0)
 	{
-		if (strcmp(entity->name, name) == 0)
-		{
-			return true;
-		}
+		return true;
 	}
-	return false;
 }
 
 
@@ -137,13 +124,9 @@ bool EntityIsNamed(const Entity* entity, const char* name)
 //	 If the Entity pointer is valid,
 //		then return the value in the "isDestroyed" flag,
 //		else return false.
-bool EntityIsDestroyed(const Entity* entity)
+bool Entity::IsDestroyed() const
 {
-	if (entity)
-	{
-		return entity->isDestroyed;
-	}
-	return false;
+	return isDestroyed;
 }
 
 
@@ -155,16 +138,11 @@ bool EntityIsDestroyed(const Entity* entity)
 //	 If 'entity' is valid,
 //	   then set the 'isDestroyed' flag,
 //	   else do nothing.
-void EntityDestroy(Entity* entity)
+void Entity::Destroy()
 {
-	if (entity)
-	{
-		entity->isDestroyed = true;
-	}
+
+	isDestroyed = true;
 }
-
-
-
 
 
 // Dynamically allocate a clone of an existing Entity.
@@ -203,7 +181,7 @@ Entity* EntityClone(const Entity* other)
 // Params:
 //	 entity = Pointer to the Entity.
 //	 stream = The data stream used for reading.
-void EntityRead(Entity* entity, Stream stream)
+void Entity::Read(Stream stream)
 {
 	if (entity && stream)
 	{
@@ -244,79 +222,6 @@ void EntityRead(Entity* entity, Stream stream)
 }
 
 
-
-// Attach an Animation component to an Entity.
-// (NOTE: This function must set the animation component's parent pointer by
-//	  calling the AnimationSetParent() function.)
-// Params:
-//	 entity = Pointer to the Entity.
-//   animation = Pointer to the Animation component to be attached.
-void EntityAddAnimation(Entity* entity, Animation* inAnimation)
-{
-	if (entity && inAnimation)
-	{
-		entity->animation = inAnimation;
-		entity->animation->SetParent(entity); // this good, do this for others
-	}
-}
-
-
-// Get the Animation component attached to an Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-// Returns:
-//	 If the Entity pointer is valid,
-//		then return a pointer to the attached Animation component,
-//		else return NULL.
-Animation* EntityGetAnimation(const Entity* entity)
-{
-	if (entity)
-	{
-		return entity->animation;
-	}
-	else
-	{
-		return NULL;
-	}
-}
-
-
-// Attach a Physics component to an Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-//   physics = Pointer to the Physics component to be attached.
-void EntityAddPhysics(Entity* entity, Physics* physics)
-{
-	if (entity && physics)
-	{
-	entity->physics = physics;
-	}
-}
-
-// Attach a sprite component to an Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-//   sprite = Pointer to the Sprite component to be attached.
-void EntityAddSprite(Entity* entity, Sprite* sprite)
-{
-	if (entity && sprite)
-	{
-	entity->sprite = sprite;
-	}
-}
-
-// Attach a transform component to an Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-//   transform = Pointer to the Transform component to be attached.
-void EntityAddTransform(Entity* entity, Transform* transform)
-{
-	if (entity && transform)
-	{
-	entity->transform = transform;
-	}
-}
-
 // Set the Entity's name.
 // [NOTE: Verify that both pointers are valid before setting the name.]
 // [NOTE: When setting the name, use strcpy_s() to reduce the risk of
@@ -326,11 +231,11 @@ void EntityAddTransform(Entity* entity, Transform* transform)
 // Params:
 //	 entity = Pointer to the Entity.
 //	 name = Pointer to the Entity's new name.
-void EntitySetName(Entity* entity, const char* name)
+void Entity::SetName(const char* inName)
 {
-	if (entity && name)
+	if (inName)
 	{
-		strcpy_s(entity->name, _countof(entity->name), name);
+		strcpy_s(name, _countof(name), inName);
 	}
 }
 
@@ -341,73 +246,9 @@ void EntitySetName(Entity* entity, const char* name)
 //	 If the Entity pointer is valid,
 //		then return a pointer to the Entity's name,
 //		else return NULL.
-const char* EntityGetName(const Entity* entity)
+const char* Entity::GetName() const
 {
-	if (entity)
-	{
-		return entity->name;
-	}
-	else
-	{
-		return NULL;
-	}
-}
-
-// Get the Physics component attached to an Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-// Returns:
-//	 If the Entity pointer is valid,
-//		then return a pointer to the attached physics component,
-//		else return NULL.
-Physics* EntityGetPhysics(const Entity* entity)
-{
-	if (entity)
-	{
-		return entity->physics;
-	}
-	else
-	{
-		return NULL;
-	}
-}
-
-// Get the Sprite component attached to a Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-// Returns:
-//	 If the Entity pointer is valid,
-//		then return a pointer to the attached Sprite component,
-//		else return NULL.
-Sprite* EntityGetSprite(const Entity* entity)
-{
-	if (entity)
-	{
-		return entity->sprite;
-	}
-	else
-	{
-		return NULL;
-	}
-}
-
-// Get the Transform component attached to a Entity.
-// Params:
-//	 entity = Pointer to the Entity.
-// Returns:
-//	 If the Entity pointer is valid,
-//		then return a pointer to the attached Transform component,
-//		else return NULL.
-Transform* EntityGetTransform(const Entity* entity)
-{
-	if (entity)
-	{
-		return entity->transform;
-	}
-	else
-	{
-		return NULL;
-	}
+	return name;
 }
 
 // Update any components attached to the Entity.

@@ -47,17 +47,19 @@ public:
 
 	~Animation();
 
-	void Read(Animation* animation, Stream stream);
+	void Read(Stream stream);
 
-	void Play(Animation* animation, int frameCount, float frameDuration, bool isLooping);
+	void Play(int frameCount, float frameDuration, bool isLooping);
 
-	void Update(Animation* animation, float dt);
+	void Update(float dt);
 
-	bool IsDone(const Animation* animation);
+	bool IsDone() const;
+
 
 
 private:
 
+	void AdvanceFrame();
 
 	// The current frame being displayed.
 	unsigned int frameIndex;

@@ -22,25 +22,7 @@
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
-typedef struct Physics
-{
-	// Previous position.  May be used for resolving collisions.
-	Vector2D	oldTranslation;
 
-	// Acceleration = inverseMass * (sum of forces)
-	Vector2D	acceleration;
-
-	// Velocity may be stored as a direction vector and speed scalar, instead.
-	Vector2D	velocity;
-
-	// Rotational velocity (in radians).
-	float rotationalVelocity;
-
-	// Used when calculating acceleration due to forces.
-	// Used when resolving collision between two dynamic objects.
-	//float		inverseMass;
-
-} Physics;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -120,16 +102,9 @@ Physics* PhysicsClone(const Physics* other)
 //	 If the physics pointer is valid,
 //		then return the component's rotational velocity value,
 //		else return 0.0f.
-float PhysicsGetRotationalVelocity(const Physics* physics)
+float Physics::GetRotationalVelocity() const
 {
-	if (physics)
-	{
-		return physics->rotationalVelocity;
-	}
-	else
-	{
-		return 0.0f;
-	}
+	return rotationalVelocity;
 }
 
 
@@ -137,12 +112,9 @@ float PhysicsGetRotationalVelocity(const Physics* physics)
 // Params:
 //	 physics = Pointer to the physics component.
 //	 rotationalVelocity = The new rotational velocity.
-void PhysicsSetRotationalVelocity(Physics* physics, float rotationalVelocity)
+void Physics::SetRotationalVelocity(float inRotationalVelocity)
 {
-	if (physics)
-	{
-		physics->rotationalVelocity = rotationalVelocity;
-	}
+	rotationalVelocity = inRotationalVelocity;
 }
 
 
@@ -151,12 +123,12 @@ void PhysicsSetRotationalVelocity(Physics* physics, float rotationalVelocity)
 // Params:
 //	 physics = Pointer to the Physics component.
 //	 stream = Pointer to the data stream used for reading.
-void PhysicsRead(Physics* physics, Stream stream)
+void Physics::Read(Stream stream)
 {
-	if (physics && stream)
+	if (stream)
 	{
-		StreamReadVector2D(stream, &physics->acceleration);
-		StreamReadVector2D(stream, &physics->velocity);
+		StreamReadVector2D(stream, &acceleration);
+		StreamReadVector2D(stream, &velocity);
 	}
 }
 
@@ -167,16 +139,9 @@ void PhysicsRead(Physics* physics, Stream stream)
 //	 If the physics pointer is valid,
 //		then return a pointer to the component's acceleration structure,
 //		else return a NULL pointer.
-const Vector2D* PhysicsGetAcceleration(const Physics* physics)
+const Vector2D* Physics::GetAcceleration() const
 {
-	if (physics)
-	{
-		return &physics->acceleration;
-	}
-	else
-	{
-		return NULL;
-	}
+	return &acceleration;
 }
 
 // Get the velocity of a Physics component.
@@ -186,16 +151,9 @@ const Vector2D* PhysicsGetAcceleration(const Physics* physics)
 //	 If the physics pointer is valid,
 //		then return a pointer to the component's velocity structure,
 //		else return a NULL pointer.
-const Vector2D* PhysicsGetVelocity(const Physics* physics)
+const Vector2D* Physics::GetVelocity() const
 {
-	if (physics)
-	{
-		return &physics->velocity;
-	}
-	else
-	{
-		return NULL;
-	}
+	return &velocity;
 }
 
 // Get the old translation (position) of a Physics component.
@@ -205,29 +163,19 @@ const Vector2D* PhysicsGetVelocity(const Physics* physics)
 //	 If the physics pointer is valid,
 //		then return a pointer to the component's oldTranslation structure,
 //		else return a NULL pointer.
-const Vector2D* PhysicsGetOldTranslation(Physics* physics)
+const Vector2D* Physics::GetOldTranslation() const
 {
-	if (physics)
-	{
-		return &physics->oldTranslation;
-	}
-	else
-	{
-		return NULL;
-	}
+	return &oldTranslation;
 }
 
 // Set the acceleration of a Physics component.
 // Params:
 //	 physics = Pointer to the Physics component.
 //	 acceleration = Pointer to an acceleration vector.
-void PhysicsSetAcceleration(Physics* physics, const Vector2D* acceleration)
+void Physics::SetAcceleration(const Vector2D* inAcceleration)
 {
-	if (physics)
-	{
-		physics->acceleration.x = acceleration->x;
-		physics->acceleration.y = acceleration->y;
-	}
+	acceleration.x = inAcceleration->x;
+	acceleration.y = inAcceleration->y;
 }
 
 // Set the velocity of a Physics component.

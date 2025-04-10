@@ -177,7 +177,7 @@ static void Level2SceneUpdate(float dt)
 // Render any objects associated with the scene.
 void Level2SceneRender(void)
 {
-	EntityRender(instance.lvl2Entity);
+	instance.lvl2Entity->Render();
 }
 
 // Free any objects associated with the scene.

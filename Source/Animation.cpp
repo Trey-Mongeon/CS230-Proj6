@@ -103,29 +103,6 @@ Animation::Animation(const Animation& other)
 	isDone = other.isDone;
 }
 
-// Dynamically allocate a clone of an existing Animation component.
-// (Hint: Perform a shallow copy of the member variables.)
-// Params:
-//	 other = Pointer to the component to be cloned.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned component,
-//	   else return NULL.
-Animation* AnimationClone(const Animation* other)
-{
-	if (other)
-	{
-		Animation* newAnim = new Animation;
-
-		if (newAnim)
-		{
-			*newAnim = *other;
-			return newAnim;
-		}
-	}
-	return NULL;
-}
-
 
 // Read the properties of an Animation component from a file.
 // [NOTE: Read the integer values for frameIndex and frameCount.]
@@ -134,16 +111,16 @@ Animation* AnimationClone(const Animation* other)
 // Params:
 //	 animation = Pointer to the Animation component.
 //	 stream = The data stream used for reading.
-void AnimationRead(Animation* animation, Stream stream)
+void Animation::Read(Stream stream)
 {
-	animation->frameIndex = StreamReadInt(stream);
-	animation->frameCount = StreamReadInt(stream);
+	frameIndex = StreamReadInt(stream);
+	frameCount = StreamReadInt(stream);
 
-	animation->frameDelay = StreamReadFloat(stream);
-	animation->frameDuration = StreamReadFloat(stream);
+	frameDelay = StreamReadFloat(stream);
+	frameDuration = StreamReadFloat(stream);
 
-	animation->isRunning = StreamReadBoolean(stream);
-	animation->isLooping = StreamReadBoolean(stream);
+	isRunning = StreamReadBoolean(stream);
+	isLooping = StreamReadBoolean(stream);
 }
 
 
@@ -154,83 +131,69 @@ void AnimationRead(Animation* animation, Stream stream)
 //	 frameCount = The number of frames in the sequence.
 //	 frameDuration = The amount of time to display each frame (in seconds).
 //	 isLooping = True if the animation loops, false otherwise.
-void AnimationPlay(Animation* animation, int frameCount, float frameDuration, bool isLooping)
+void Animation::Play(int frameCount, float frameDuration, bool isLooping)
 {
-	if (animation)
-	{
-		animation->frameCount = frameCount;
-		animation->frameDuration = frameDuration;
-		animation->isLooping = isLooping;
-		animation->frameDelay = frameDuration;
-		animation->frameIndex = 0;
-		animation->isDone = false;
-		animation->isRunning = true;
+		frameCount = frameCount;
+		frameDuration = frameDuration;
+		isLooping = isLooping;
+		frameDelay = frameDuration;
+		frameIndex = 0;
+		isDone = false;
+		isRunning = true;
 
-		SpriteSetFrame(EntityGetSprite(animation->parent), animation->frameIndex);
-	}
-	else
-	{
-		return;
-	}
+		Sprite* sprite = this->GetParent()->GetSprite();
+		sprite->SetFrame(frameIndex);
 }
-
-
-static void AnimationAdvanceFrame(Animation* animation);
 
 
 // Update the animation.
 // Params:
 //	 animation = Pointer to the Animation component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void AnimationUpdate(Animation* animation, float dt)
+void Animation::Update(float dt)
 {
-	if (animation)
+	isDone = false;
+	if(isRunning)
 	{
-		animation->isDone = false;
-		if(animation->isRunning)
-		{
-			animation->frameDelay -= dt;
+		frameDelay -= dt;
 
-		if (animation->frameDelay <= 0)
+		if (frameDelay <= 0)
 		{
-			AnimationAdvanceFrame(animation);
+			AdvanceFrame();
 		}
-		}
-	}
-	else
-	{
-		return;
 	}
 }
 
-static void AnimationAdvanceFrame(Animation* animation)
+void Animation::AdvanceFrame()
 {
-	if (animation && animation->parent)
+	if (GetParent())
 	{
-		animation->frameIndex += 1;
-		if (animation->frameIndex >= animation->frameCount)
+		frameIndex += 1;
+		if (frameIndex >= frameCount)
 		{
-			if (animation->isLooping)
+			if (isLooping)
 			{
-				animation->frameIndex = 0;
+				frameIndex = 0;
 			}
 
 			else
 			{
-				animation->frameIndex = animation->frameCount - 1;
-				animation->isRunning = false;
+				frameIndex = frameCount - 1;
+				isRunning = false;
 			}
-			animation->isDone = true;
+			isDone = true;
 		}
 
-		if (animation->isRunning)
+		if (isRunning)
 		{
-			SpriteSetFrame(EntityGetSprite(animation->parent), animation->frameIndex);
-			animation->frameDelay += animation->frameDuration;
+			Sprite* sprite = this->GetParent()->GetSprite();
+			sprite->SetFrame(frameIndex);
+
+			frameDelay += frameDuration;
 		}
 		else
 		{
-			animation->frameDelay = 0;
+			frameDelay = 0;
 		}
 	}
 		return;
@@ -243,16 +206,9 @@ static void AnimationAdvanceFrame(Animation* animation)
 //	 If the Animation pointer is valid,
 //		then return the value in isDone,
 //		else return false.
-bool AnimationIsDone(const Animation* animation)
+bool Animation::IsDone() const
 {
-	if (animation)
-	{
-		return animation->isDone;
-	}
-	else
-	{
-		return false;
-	}
+	return isDone;
 }
 
 //------------------------------------------------------------------------------
