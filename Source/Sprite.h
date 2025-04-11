@@ -23,9 +23,9 @@
 // Forward References:
 //------------------------------------------------------------------------------
 
-typedef class Mesh Mesh;
-typedef class SpriteSource SpriteSource;
-typedef class Transform Transform;
+typedef struct Mesh Mesh;
+typedef struct SpriteSource SpriteSource;
+class Transform;
 typedef FILE* Stream;
 
 //------------------------------------------------------------------------------

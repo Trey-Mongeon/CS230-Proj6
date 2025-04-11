@@ -16,6 +16,7 @@
 //------------------------------------------------------------------------------
 #include <vector>
 #include "Component.h"
+#include <algorithm>
 //------------------------------------------------------------------------------
 
 
@@ -57,27 +58,13 @@ public:
 
 	bool IsDestroyed() const;
 
-	void AddAnimation(Animation* animation);
-
-	void AddPhysics(Physics* physics);
-
-	void AddSprite(Sprite* sprite);
-
-	void AddTransform(Transform* transform);
-
 	void SetName(const char* name);
 
 	const char* GetName() const;
 
 	bool IsNamed(const char* name) const;
 
-	Animation* GetAnimation() const;
-
-	Physics* GetPhysics() const;
-
-	Sprite* GetSprite() const;
-
-	Component* Entity::BinarySearch(Component::TypeEnum type)
+	Component* Entity::BinarySearch(Component::TypeEnum type) const
 	{
 		size_t begin = 0;
 		size_t end = components.size();
@@ -103,9 +90,17 @@ public:
 	}
 
 
-	// Get a component of the specified type.
+// Get a component of the specified type.
 // Return NULL if no such component is found.
 	Component* Entity::Get(Component::TypeEnum type)
+	{
+		return BinarySearch(type);
+	}
+
+
+	// Get a component of the specified type.
+// Return NULL if no such component is found.
+	const Component* Entity::Get(Component::TypeEnum type) const
 	{
 		return BinarySearch(type);
 	}
@@ -118,13 +113,32 @@ public:
 		return static_cast<type*>(Get(typeId));
 	}
 
-
-
-	Transform* GetTransform() const;
+	/// Type safe method for accessing the components.
+	template<typename type>
+	const type* GetComponent(Component::TypeEnum typeId) const
+	{
+		return static_cast<const type*>(Get(typeId));
+	}
 
 	void Update(float dt);
 
 	void Render();
+
+	void Entity::Add(Component* component)
+	{
+		if (component)
+		{
+			// Set the component's parent.
+			component->SetParent(this);
+
+			// Add the component to the components list.
+			components.push_back(component);
+
+			// Sort the list for faster access using a binary search.
+			std::sort(components.begin(), components.end(), Component::Comparator);
+		}
+	}
+
 
 private:
 

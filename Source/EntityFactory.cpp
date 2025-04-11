@@ -67,11 +67,11 @@ Entity* EntityFactoryBuild(const char* entityName)
 
 			if (!strncmp("Entity", token, _countof("Entity")))
 			{
-				Entity* entityPtr = EntityCreate();
-				EntityRead(entityPtr, stream);
+				Entity* entityPtr = new Entity;
+				entityPtr->Read(stream);
 
 				StreamClose(&stream);
-				return EntityClone(entityPtr);
+				return entityPtr;
 			}
 		}
 	}

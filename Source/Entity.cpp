@@ -42,60 +42,28 @@
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
-// Dynamically allocate a new Entity.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-// Returns:
-//	 If the memory allocation was successful,
-//	   then return a pointer to the allocated memory,
-//	   else return NULL.
-Entity* EntityCreate(void)
-{
-	Entity* entityPtr = new Entity;
-	if (entityPtr)
-	{
-		return entityPtr;
-	}
-	else
-	{
-		return NULL;
-	}
-}
 
 Entity::Entity()
 {
 	isDestroyed = false;
 	memset(name, 0, 32);
-	components = { 0 };
 }
 
 Entity::Entity(const Entity* other)
 {
 	isDestroyed = other->isDestroyed;
-	// im abt to kill myself
+	memcpy(name, other->name, 32);
+	for (int i = 0; i < other->components.size(); ++i)
+	{
+		Add(other->components[i]->Clone());
+	}
 }
 
 Entity::~Entity()
 {
-
-}
-
-
-// Free the memory associated with an Entity.
-// (NOTE: All attached components must be freed using the corresponding Free() functions.)
-// (NOTE: The Entity pointer must be set to NULL.)
-// Params:
-//	 entity = Pointer to the Entity pointer.
-void EntityFree(Entity** entity)
-{
-	if (entity && *entity)
+	for (int i = 0; i < components.size(); ++i)
 	{
-		SpriteFree(&(*entity)->sprite);
-		PhysicsFree(&(*entity)->physics);
-		TransformFree(&(*entity)->transform);
-		AnimationFree(&(*entity)->animation);
-		free(*entity);
-
-   		*entity = NULL;
+		delete components[i];
 	}
 }
 
@@ -113,6 +81,10 @@ bool Entity::IsNamed(const char* inName) const
 	if (strcmp(name, inName) == 0)
 	{
 		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
@@ -140,39 +112,7 @@ bool Entity::IsDestroyed() const
 //	   else do nothing.
 void Entity::Destroy()
 {
-
 	isDestroyed = true;
-}
-
-
-// Dynamically allocate a clone of an existing Entity.
-// (Hint: Make sure to perform a shallow copy or deep copy, as appropriate.)
-// (WARNING: You should use the EntityAdd* functions when attaching cloned
-//    components to the cloned Entity.  This will ensure that the 'parent'
-//    variable is set properly.)
-// Params:
-//	 other = Pointer to the Entity to be cloned.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned Entity,
-//	   else return NULL.
-Entity* EntityClone(const Entity* other)
-{
-	if (other)
-	{
-		Entity* entity = new Entity;
-
-		if (entity)
-		{
-			*entity = *other;
-			EntityAddAnimation(entity, AnimationClone(other->animation));
-			EntityAddPhysics(entity, PhysicsClone(other->physics));
-			EntityAddSprite(entity, SpriteClone(other->sprite));
-			EntityAddTransform(entity, TransformClone(other->transform));
-		}
-		return entity;
-	}
-	return NULL;
 }
 
 
@@ -183,35 +123,35 @@ Entity* EntityClone(const Entity* other)
 //	 stream = The data stream used for reading.
 void Entity::Read(Stream stream)
 {
-	if (entity && stream)
+	if (stream)
 	{
-		strcpy_s(entity->name, _countof(entity->name), StreamReadToken(stream));
+		strcpy_s(name, _countof(name), StreamReadToken(stream));
 		while (true)
 		{
 			const char* token = StreamReadToken(stream);
 			if (strstr(token, "Transform"))
 			{
-				Transform* transformPtr = TransformCreate();
-				TransformRead(transformPtr, stream);
-				entity->transform = transformPtr;
+				Transform* transformPtr = new Transform;
+				transformPtr->Read(stream);
+				Add(transformPtr);
 			}
 			else if (strstr(token, "Physics"))
 			{
-				Physics* physicsPtr = PhysicsCreate();
-				PhysicsRead(physicsPtr, stream);
-				entity->physics = physicsPtr;
+				Physics* physicsPtr = new Physics;
+				physicsPtr->Read(stream);
+				Add(physicsPtr);
 			}
 			else if (strstr(token, "Sprite"))
 			{
-				Sprite* spritePtr = SpriteCreate();           /// PLACES WHERE CREATE IS CALLED NEW IS CALLED NOW - FREE IS DELETE
-				SpriteRead(spritePtr, stream);
-				entity->sprite = spritePtr;
+				Sprite* spritePtr = new Sprite;
+				spritePtr->Read(stream);
+				Add(spritePtr);
 			}
 			else if (strstr(token, "Animation"))
 			{
-				Animation* animationPtr = AnimationCreate();
-				AnimationRead(animationPtr, stream);
-				EntityAddAnimation(entity, animationPtr);
+				Animation* animationPtr = new Animation;
+				animationPtr->Read(stream);
+				Add(animationPtr);
 			}
 			else if(token[0] == '\0')
 			{ 
@@ -257,19 +197,13 @@ const char* Entity::GetName() const
 // Params:
 //	 entity = Pointer to the Entity.
 //	 dt = Change in time (in seconds) since the last game loop.
-void EntityUpdate(Entity* entity, float dt)
+void Entity::Update(float dt)
 {
-	if (entity)
+	for (int i = 0; i < components.size(); ++i)
 	{
-		if (entity->animation)
-		{
-			AnimationUpdate(entity->animation, dt);
-		}
-		if (entity->transform && entity->physics)
-		{
-			PhysicsUpdate(entity->physics, entity->transform, dt);
-		}
+		components[i]->Update(dt);
 	}
+
 }
 
 // Render any visible components attached to the Entity.
@@ -277,11 +211,13 @@ void EntityUpdate(Entity* entity, float dt)
 // (NOTE: You must first check for valid pointers before calling this function.)
 // Params:
 //	 entity = Pointer to the Entity.
-void EntityRender(Entity* entity)
+void Entity::Render()
 {
-	if (entity)
+	Sprite* sprite = GetComponent<Sprite>(Component::cSprite);
+	Transform* transform = GetComponent<Transform>(Component::cTransform);
+	if (sprite && transform)
 	{
- 		SpriteRender(entity->sprite, entity->transform);
+		sprite->Render(transform);
 	}
 }
 //------------------------------------------------------------------------------

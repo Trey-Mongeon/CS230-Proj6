@@ -51,15 +51,17 @@ Sprite::Sprite()
 	alpha = 1.0f;
 	frameIndex = 0;
 	mType = cSprite;
+	spriteSource = NULL;
+	mesh = NULL;
+	text = NULL;
 }
 
 
 Sprite::Sprite(const Sprite& other)
 {
-
 	mType = other.mType;
 
-	mParent = other.mParent;
+	mParent = NULL;
 
 	frameIndex = other.frameIndex;
 
@@ -108,8 +110,8 @@ void Sprite::Render(Transform* transform) const
 		if (spriteSource)
 		{
 			DGL_Graphics_SetShaderMode(DGL_PSM_TEXTURE, DGL_VSM_DEFAULT);
-			spriteSource->SetTexture();
-			spriteSource->SetTextureOffset(frameIndex);
+			SpriteSourceSetTexture(spriteSource);
+			SpriteSourceSetTextureOffset(spriteSource, frameIndex);
 
 		}
 		else
@@ -122,13 +124,13 @@ void Sprite::Render(Transform* transform) const
 
 		if (text == NULL)
 		{
-			DGL_Graphics_SetCB_TransformMatrix(TransformGetMatrix(transform));
+			DGL_Graphics_SetCB_TransformMatrix(transform->GetMatrix());
 			MeshRender(mesh);
 		}
 		else
 		{
-			Matrix2D matrix = *TransformGetMatrix(transform);
-			Vector2D transformScale = *TransformGetScale(transform);
+			Matrix2D matrix = *transform->GetMatrix();
+			Vector2D transformScale = *transform->GetScale();
 			Matrix2D translationMatrix;
 			Matrix2DTranslate(&translationMatrix, transformScale.x, 0.0f);
 
@@ -137,7 +139,7 @@ void Sprite::Render(Transform* transform) const
 			while (*spriteText)
 			{
 				int currentIndex = *spriteText - ' ';
-				spriteSource->SetTextureOffset(currentIndex);
+				SpriteSourceSetTextureOffset(spriteSource, currentIndex);
 				DGL_Graphics_SetCB_TransformMatrix(&matrix);
 				MeshRender(mesh);
 				++spriteText;
@@ -189,7 +191,7 @@ void Sprite::SetAlpha(float inAlpha)
 //     TraceMessage("SpriteSetFrame: frame index = %d", frameIndex);
 void Sprite::SetFrame(unsigned int inFrameIndex)
 {
-	if (frameIndex >= 0 && frameIndex < spriteSource->GetFrameCount())
+	if (frameIndex >= 0 && frameIndex < SpriteSourceGetFrameCount(spriteSource))
 	{
 		frameIndex = inFrameIndex;
 

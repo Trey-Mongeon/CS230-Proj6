@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	SpriteSourceLibrary.cpp
+// File Name:	SpriteSourceLibrary.c
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 2
 // Course:		CS230S25
@@ -22,7 +22,17 @@
 // Private Structures:
 //------------------------------------------------------------------------------
 
+typedef struct SpriteSourceLibrary
+{
+	// The number of sprite sources currently in the list.
+	unsigned int spriteSourceCount;
 
+	// A list of all currently loaded sprite sources.
+	// This list can be a fixed-length array (minimum size of 10 entries)
+	// or a dynamically-sized array, such as a linked list.
+	SpriteSource* spriteSourceList[16];
+
+} SpriteSourceLibrary;
 
 //------------------------------------------------------------------------------
 // Public Variables:
@@ -45,7 +55,7 @@ static SpriteSourceLibrary sources;
 
 // Initialize the SpriteSource Library.
 // (NOTE: Make sure to initialize all memory to zero.)
-void SpriteSourceLibrary::Init()
+void SpriteSourceLibraryInit()
 {
 	sources.spriteSourceCount = 0;
 
@@ -59,11 +69,11 @@ void SpriteSourceLibrary::Init()
 // Free all SpriteSource objects in the SpriteSource Library.
 // (NOTE: You must call SpriteSourceFree() to free each SpriteSource object.)
 // (HINT: The list should contain nothing but NULL pointers once this function is done.)
-void SpriteSourceLibrary::FreeAll()
+void SpriteSourceLibraryFreeAll()
 {
 	for (unsigned int i = 0; i < sources.spriteSourceCount; ++i)
 	{
-		delete sources.spriteSourceList[i];
+		SpriteSourceFree(&sources.spriteSourceList[i]);
 	}
 	sources.spriteSourceCount = 0;
 }
@@ -74,7 +84,7 @@ void SpriteSourceLibrary::FreeAll()
 //------------------------------------------------------------------------------
 
 
-static void SpriteSourceLibrary::Add(SpriteSource* spriteSource)
+static void SpriteSourceLibraryAdd(SpriteSource* spriteSource)
 {
 	if (spriteSource == NULL)
 	{
@@ -85,7 +95,7 @@ static void SpriteSourceLibrary::Add(SpriteSource* spriteSource)
 }
 
 
-static const SpriteSource* SpriteSourceLibrary::Find(const char* sourceName)
+static const SpriteSource* SpriteSourceLibraryFind(const char* sourceName)
 {
 	if (sourceName == NULL)
 	{
@@ -120,7 +130,7 @@ static const SpriteSource* SpriteSourceLibrary::Find(const char* sourceName)
 //	 If the SpriteSource already exists or was created successfully,
 //	   then return a pointer to the SpriteSource,
 //	   else return NULL.
-const SpriteSource* SpriteSourceLibrary::Build(const char* spriteSourceName)
+const SpriteSource* SpriteSourceLibraryBuild(const char* spriteSourceName)
 {
 	if (spriteSourceName == NULL || !strcmp(spriteSourceName, "None"))
 	{

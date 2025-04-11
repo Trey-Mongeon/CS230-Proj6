@@ -23,7 +23,7 @@
 // Forward References:
 //------------------------------------------------------------------------------
 
-typedef struct Entity Entity;
+class Entity;
 typedef struct EntityContainer EntityContainer;
 
 //------------------------------------------------------------------------------

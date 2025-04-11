@@ -15,46 +15,6 @@
 #include "Sprite.h"
 #include "Entity.h"
 
-//------------------------------------------------------------------------------
-// Private Constants:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// Public Structures:
-//------------------------------------------------------------------------------
-
-
-
-//------------------------------------------------------------------------------
-// Public Variables:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// Private Variables:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// Private Function Declarations:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// Public Functions:
-//------------------------------------------------------------------------------
-
-// Dynamically allocate a new Animation component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-Animation* AnimationCreate(void)
-{
-	Animation* animationPtr = new Animation;
-	if (animationPtr)
-	{
-		return animationPtr;
-	}
-	else
-	{
-		return NULL;
-	}
-}
 
 Animation::Animation()
 {
@@ -131,17 +91,17 @@ void Animation::Read(Stream stream)
 //	 frameCount = The number of frames in the sequence.
 //	 frameDuration = The amount of time to display each frame (in seconds).
 //	 isLooping = True if the animation loops, false otherwise.
-void Animation::Play(int frameCount, float frameDuration, bool isLooping)
+void Animation::Play(int inFrameCount, float inFrameDuration, bool inIsLooping)
 {
-		frameCount = frameCount;
-		frameDuration = frameDuration;
-		isLooping = isLooping;
-		frameDelay = frameDuration;
+		frameCount = inFrameCount;
+		frameDuration = inFrameDuration;
+		isLooping = inIsLooping;
+		frameDelay = inFrameDuration;
 		frameIndex = 0;
 		isDone = false;
 		isRunning = true;
 
-		Sprite* sprite = this->GetParent()->GetSprite();
+		Sprite* sprite = GetParent()->GetComponent<Sprite>(cSprite);
 		sprite->SetFrame(frameIndex);
 }
 
@@ -186,7 +146,7 @@ void Animation::AdvanceFrame()
 
 		if (isRunning)
 		{
-			Sprite* sprite = this->GetParent()->GetSprite();
+			Sprite* sprite = GetParent()->GetComponent<Sprite>(cSprite);
 			sprite->SetFrame(frameIndex);
 
 			frameDelay += frameDuration;
@@ -210,8 +170,3 @@ bool Animation::IsDone() const
 {
 	return isDone;
 }
-
-//------------------------------------------------------------------------------
-// Private Functions:
-//------------------------------------------------------------------------------
-

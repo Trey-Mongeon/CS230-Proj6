@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------
 
 typedef struct Collider Collider;
-typedef struct Entity Entity;
+class Entity;
 typedef FILE* Stream;
 
 //------------------------------------------------------------------------------

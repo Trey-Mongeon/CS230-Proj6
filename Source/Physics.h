@@ -14,7 +14,8 @@
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
-
+#include "DGL.h"
+#include "Component.h"
 //------------------------------------------------------------------------------
 
 
@@ -35,9 +36,15 @@ typedef FILE* Stream;
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
-class Physics
+class Physics : public Component
 {
 public:
+
+	Physics();
+
+	Physics(const Physics& other);
+
+	~Physics();
 
 	void Read(Stream stream);
 
@@ -55,7 +62,7 @@ public:
 
 	void SetRotationalVelocity(float rotationalVelocity);
 
-	void PhysicsUpdate(Transform* transform, float dt);
+	void Update(float dt);
 
 private:
 
@@ -79,12 +86,6 @@ private:
 // Public Functions:
 //------------------------------------------------------------------------------
 
-
-Physics* PhysicsCreate(void);
-
-Physics* PhysicsClone(const Physics* other);
-
-void PhysicsFree(Physics** physics);
 
 //------------------------------------------------------------------------------
 

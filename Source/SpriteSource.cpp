@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	SpriteSource.cpp
+// File Name:	SpriteSource.c
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
 // Project:		Project 2
 // Course:		CS230S25
@@ -21,7 +21,26 @@
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
+typedef struct SpriteSource
+{
+	// The name of the sprite source.
+	// A buffer is used to allow each sprite source to have a unique name.
+	// The buffer is hardcoded to an arbitrary length that will be sufficient
+	//	 for all CS230 assignments.  You may, instead, use dynamically-allocated
+	//	 arrays for this purpose but the additional complexity is unnecessary
+	//	 and it is your responsibility to ensure that the memory is successfully
+	//	 allocated and deallocated in all possible situations.
+	char name[32];
 
+	// The dimensions of the sprite sheet.
+	// (Hint: These should be initialized to (1, 1).)
+	int	numRows;
+	int	numCols;
+
+	// Pointer to a texture resource created using the DigiPen Graphics Library (DGL).
+	DGL_Texture* texture;
+
+} SpriteSource;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -37,20 +56,44 @@
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
-
-
-SpriteSource::SpriteSource()
+// Dynamically allocate a new SpriteSource object.
+// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
+// (Hint: numRows and numCols should be initialized to 1.)
+// Returns:
+//	 If the memory allocation was successful,
+//	   then return a pointer to the allocated memory,
+//	   else return NULL.
+SpriteSource* SpriteSourceCreate()
 {
-	numCols = 1;
-	numRows = 1;
-	texture = NULL;
-	memset(name, 0, 32);
+	SpriteSource* spriteSourcePtr = new SpriteSource;
+	if (spriteSourcePtr)
+	{
+		spriteSourcePtr->numCols = 1;
+		spriteSourcePtr->numRows = 1;
+		return spriteSourcePtr;
+	}
+	else
+	{
+		return NULL;
+	}
+
 }
 
 
-SpriteSource::~SpriteSource()
+// Free the memory associated with a SpriteSource object.
+// (NOTE: The DGL_Texture resource must be freed using DGL_Graphics_FreeTexture().)
+// (NOTE: The SpriteSource object must be freed using free().
+// (NOTE: The SpriteSource pointer must be set to NULL.)
+// Params:
+//	 spriteSource = Pointer to the SpriteSource pointer.
+void SpriteSourceFree(SpriteSource** spriteSource)
 {
-	DGL_Graphics_FreeTexture(&texture);
+	if (spriteSource && *spriteSource)
+	{
+		DGL_Graphics_FreeTexture(&(*spriteSource)->texture);
+		free(*spriteSource);
+		*spriteSource = NULL;
+	}
 }
 
 
@@ -62,18 +105,20 @@ SpriteSource::~SpriteSource()
 //	 numCols = The number of columns in the sprite sheet.
 //	 numRows = The number of rows in the sprite sheet.
 //	 textureName = The name of the texture to be loaded.
-void SpriteSource::LoadTexture(int inNumCols, int inNumRows, const char* textureName)
+void SpriteSourceLoadTexture(SpriteSource* spriteSource, int numCols, int numRows, const char* textureName)
 {
-	char newFileName[256];
-	char assetStr[8] = { "Assets/" };
+	if (spriteSource)
+	{
+		char newFileName[256];
+		char assetStr[8] = { "Assets/" };
 
-	sprintf_s(newFileName, _countof(newFileName), "%s%s", &assetStr, textureName);
+		sprintf_s(newFileName, _countof(newFileName), "%s%s", &assetStr, textureName);
 
-	numCols = inNumCols;
-	numRows = inNumRows;
+		spriteSource->numCols = numCols;
+		spriteSource->numRows = numRows;
 
-	texture = DGL_Graphics_LoadTexture(newFileName);
-	
+		spriteSource->texture = DGL_Graphics_LoadTexture(newFileName);
+	}
 }
 
 
@@ -88,17 +133,17 @@ void SpriteSource::LoadTexture(int inNumCols, int inNumRows, const char* texture
 // Params:
 //	 spriteSource = Pointer to the SpriteSource object.
 //	 stream = Pointer to the data stream used for reading.
-void SpriteSource::Read(Stream stream)
+void SpriteSourceRead(SpriteSource* spriteSource, Stream stream)
 {
 	const char* token = StreamReadToken(stream);
 	if (strcmp(token, "SpriteSource") == 0)
 	{
-		const char* inName = StreamReadToken(stream);
-		strcpy_s(name, sizeof(name), inName);
-		numCols = StreamReadInt(stream);
-		numRows = StreamReadInt(stream);
+		const char* name = StreamReadToken(stream);
+		strcpy_s(spriteSource->name, sizeof(spriteSource->name), name);
+		spriteSource->numCols = StreamReadInt(stream);
+		spriteSource->numRows = StreamReadInt(stream);
 		const char* filePath = StreamReadToken(stream);
-		texture = DGL_Graphics_LoadTexture(filePath);
+		spriteSource->texture = DGL_Graphics_LoadTexture(filePath);
 	}
 }
 
@@ -111,11 +156,11 @@ void SpriteSource::Read(Stream stream)
 //	 If the SpriteSource and name pointers are valid,
 //		then perform a string comparison and return the result (match = true),
 //		else return false.
-bool SpriteSource::IsNamed(const char* inName) const
+bool SpriteSourceIsNamed(const SpriteSource* spriteSource, const char* name)
 {
-	if (inName)
+	if (spriteSource && name)
 	{
-		if (strcmp(name, inName) == 0)
+		if (strcmp(spriteSource->name, name) == 0)
 		{
 			return true;
 		}
@@ -132,9 +177,16 @@ bool SpriteSource::IsNamed(const char* inName) const
 //	 If the SpriteSource pointer is valid,
 //		then return the calculated frame count (numCols * numRows),
 //		else return 0.
-unsigned SpriteSource::GetFrameCount() const
+unsigned SpriteSourceGetFrameCount(const SpriteSource* spriteSource)
 {
-	return numCols * numRows;
+	if (spriteSource)
+	{
+		return ((spriteSource->numCols) * (spriteSource->numRows));
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 
@@ -145,34 +197,38 @@ unsigned SpriteSource::GetFrameCount() const
 //	 frameIndex = A frame index within a sprite sheet.
 //   u = Pointer to a float to contain the U coordinate. 
 //   v = Pointer to a float to contain the V coordinate. 
-void SpriteSource::GetUV(unsigned int frameIndex, float* u, float* v) const
+void SpriteSourceGetUV(const SpriteSource* spriteSource, unsigned int frameIndex, float* u, float* v)
 {
-	float uSize = 1.0f / numCols;
-	float vSize = 1.0f / numRows;
+	if (spriteSource)
+	{
+		float uSize = 1.0f / spriteSource->numCols;
+		float vSize = 1.0f / spriteSource->numRows;
 
-	*u = uSize * (frameIndex % numCols);
-	*v = vSize * (frameIndex / numCols);
+		*u = uSize * (frameIndex % spriteSource->numCols);
+		*v = vSize * (frameIndex / spriteSource->numCols);
+
+	}
 }
 
 
 // Sets a SpriteSource texture for rendering.
 // Params:
 //	 spriteSource = Pointer to the SpriteSource object.
-void SpriteSource::SetTexture() const
+void SpriteSourceSetTexture(const SpriteSource* spriteSource)
 {
-	DGL_Graphics_SetTexture(texture);
+	DGL_Graphics_SetTexture(spriteSource->texture);
 }
 
 
 // Sets the texture UV offsets for rendering.
 // Params:
 //	 spriteSource = Pointer to the SpriteSource object.
-void SpriteSource::SetTextureOffset(unsigned frameIndex) const
+void SpriteSourceSetTextureOffset(const SpriteSource* spriteSource, unsigned frameIndex)
 {
 	DGL_Vec2 offsetVector;
 	if (&offsetVector)
 	{
-		GetUV(frameIndex, &offsetVector.x, &offsetVector.y);
+		SpriteSourceGetUV(spriteSource, frameIndex, &offsetVector.x, &offsetVector.y);
 		DGL_Graphics_SetCB_TextureOffset(&offsetVector);
 	}
 }

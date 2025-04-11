@@ -23,7 +23,7 @@
 // Forward References:
 //------------------------------------------------------------------------------
 
-typedef struct Entity Entity;
+class Entity;
 typedef struct Behavior Behavior;
 typedef FILE* Stream;
 

@@ -153,25 +153,25 @@ static void Level1SceneSetMonkeyState(Entity* entity, enum MonkeyStates newState
 	{
 		instance.monkeyState = newState;
 
-		Sprite* entitySpr = EntityGetSprite(entity);
-		Animation* entityAnim = EntityGetAnimation(entity);
+		Sprite* entitySpr = entity->GetComponent<Sprite>(Component::cSprite);
+		Animation* entityAnim = entity->GetComponent<Animation>(Component::cAnimation);
 
 		switch (newState)
 		{
 		case MonkeyIdle:
-			SpriteSetMesh(entitySpr, instance.mesh);
-			SpriteSetSpriteSource(entitySpr, instance.monkeyIdleSource);
-			AnimationPlay(entityAnim, 1, 0.0f, false);
+			entitySpr->SetMesh(instance.mesh);
+			entitySpr->SetSpriteSource(instance.monkeyIdleSource);
+			entityAnim->Play(1, 0.0f, false);
 			break;
 		case MonkeyWalk:
-			SpriteSetMesh(entitySpr, instance.monkeyMesh);
-			SpriteSetSpriteSource(entitySpr, instance.monkeyWalkSource);
-			AnimationPlay(entityAnim, 8, 0.05f, true);
+			entitySpr->SetMesh(instance.monkeyMesh);
+			entitySpr->SetSpriteSource(instance.monkeyWalkSource);
+			entityAnim->Play(8, 0.05f, true);
 			break;
 		case MonkeyJump:
-			SpriteSetMesh(entitySpr, instance.mesh);
-			SpriteSetSpriteSource(entitySpr, instance.monkeyJumpSource);
-			AnimationPlay(entityAnim, 1, 0.0f, false);
+			entitySpr->SetMesh(instance.mesh);
+			entitySpr->SetSpriteSource(instance.monkeyJumpSource);
+			entityAnim->Play(1, 0.0f, false);
 			break;
 		}
 	}
@@ -179,12 +179,12 @@ static void Level1SceneSetMonkeyState(Entity* entity, enum MonkeyStates newState
 
 static void Level1SceneMovementController(Entity* entity)
 {
-	Physics* entityPhysics = EntityGetPhysics(entity);
-	Transform* entityTransform = EntityGetTransform(entity);
+	Physics* entityPhysics = entity->GetComponent<Physics>(Component::cPhysics);
+	Transform* entityTransform = entity->GetComponent<Transform>(Component::cTransform);
 	
 	if (entityPhysics && entityTransform)
 	{
-		Vector2D entityVelocity = *PhysicsGetVelocity(entityPhysics);
+		Vector2D entityVelocity = *entityPhysics->GetVelocity();
 
 		if (DGL_Input_KeyDown(VK_LEFT))
 		{
@@ -215,19 +215,19 @@ static void Level1SceneMovementController(Entity* entity)
 		{
 			Level1SceneSetMonkeyState(entity, MonkeyJump);
 			entityVelocity.y = jumpVelocity;
-			PhysicsSetAcceleration(entityPhysics, &gravityNormal);
+			entityPhysics->SetAcceleration(&gravityNormal);
 		}
-		Vector2D entityPos = *TransformGetTranslation(entityTransform);
+		Vector2D entityPos = *entityTransform->GetTranslation();
 
 		if (entityPos.y < groundHeight)
 		{
 			entityPos.y = groundHeight;
-			TransformSetTranslation(entityTransform, &entityPos);
+			entityTransform->SetTranslation(&entityPos);
 			entityVelocity.y = 0;
-			PhysicsSetAcceleration(entityPhysics, &gravityNone);
+			entityPhysics->SetAcceleration(&gravityNone);
 			Level1SceneSetMonkeyState(entity, MonkeyIdle);
 		}
-		PhysicsSetVelocity(entityPhysics, &entityVelocity);
+		entityPhysics->SetVelocity(&entityVelocity);
 	}
 }
 
@@ -236,13 +236,13 @@ static void Level1SceneMovementController(Entity* entity)
 
 static void Level1SceneBounceController(Entity* entity)
 {
-	Physics* ePhysics = EntityGetPhysics(entity);
-	Transform* eTransform = EntityGetTransform(entity);
+	Physics* ePhysics = entity->GetComponent<Physics>(Component::cPhysics);
+	Transform* eTransform = entity->GetComponent<Transform>(Component::cTransform);
 
 	if (ePhysics && eTransform)
 	{
-		DGL_Vec2 ePos = *TransformGetTranslation(eTransform);
-		DGL_Vec2 eVel = *PhysicsGetVelocity(ePhysics);
+		DGL_Vec2 ePos = *eTransform->GetTranslation();
+		DGL_Vec2 eVel = *ePhysics->GetVelocity();
 
 		if (ePos.x <= -wallDistance)
 		{
@@ -259,16 +259,16 @@ static void Level1SceneBounceController(Entity* entity)
 			ePos.y = groundHeight + (groundHeight - ePos.y);
 			eVel.y = -eVel.y;
 		}
-		PhysicsSetVelocity(ePhysics, &eVel);
-		TransformSetTranslation(eTransform, &ePos);
+		ePhysics->SetVelocity(&eVel);
+		eTransform->SetTranslation(&ePos);
 	}
 }
 
 
 static bool Level1SceneIsColliding(const Entity* entityA, const Entity* entityB)
 {
-	Vector2D entityAPos = *TransformGetTranslation(EntityGetTransform(entityA));
-	Vector2D entityBPos = *TransformGetTranslation(EntityGetTransform(entityB));
+	Vector2D entityAPos = *entityA->GetComponent<Transform>(Component::cTransform)->GetTranslation();
+	Vector2D entityBPos = *entityB->GetComponent<Transform>(Component::cTransform)->GetTranslation();
 	float dist = Vector2DSquareDistance(&entityAPos, &entityBPos);
 	if (dist <= CheckSquareDistance)
 	{
@@ -324,9 +324,9 @@ static void Level1SceneInit()
 	instance.planetEntity = EntityFactoryBuild("PlanetBounce");
 	if (instance.planetEntity)
 	{
-		SpriteSetMesh(EntityGetSprite(instance.planetEntity), instance.mesh);
-		SpriteSetSpriteSource(EntityGetSprite(instance.planetEntity), instance.spriteSource);
-		SpriteSetFrame(EntityGetSprite(instance.planetEntity), 0);
+		instance.planetEntity->GetComponent<Sprite>(Component::cSprite)->SetMesh(instance.mesh);
+		instance.planetEntity->GetComponent<Sprite>(Component::cSprite)->SetSpriteSource(instance.spriteSource);
+		instance.planetEntity->GetComponent<Sprite>(Component::cSprite)->SetFrame(0);
 	}
 	instance.monkeyEntity = EntityFactoryBuild("Monkey");
 	if (instance.monkeyEntity)
@@ -337,11 +337,11 @@ static void Level1SceneInit()
 	instance.LivesText = EntityFactoryBuild("MonkeyLivesText");
 	if (instance.LivesText)
 	{
-		Sprite* LivesTextSpr = EntityGetSprite(instance.LivesText);
-		SpriteSetMesh(LivesTextSpr, instance.LivesTextMesh);
-		SpriteSetSpriteSource(LivesTextSpr, instance.LivesTextSpriteSource);
+		Sprite* LivesTextSpr = instance.LivesText->GetComponent<Sprite>(Component::cSprite);
+		LivesTextSpr->SetMesh(instance.LivesTextMesh);
+		LivesTextSpr->SetSpriteSource(instance.LivesTextSpriteSource);
 		sprintf_s(instance.livesBuffer, _countof(instance.livesBuffer), "Lives : %d", instance.numLives);
-		SpriteSetText(LivesTextSpr, instance.livesBuffer);
+		LivesTextSpr->SetText(instance.livesBuffer);
 	}
 	const DGL_Color bg_Color = { 1.0f, 1.0f, 1.0f };
 	DGL_Graphics_SetBackgroundColor(&bg_Color);
@@ -358,11 +358,11 @@ static void Level1SceneUpdate(float dt)
 
 	Level1SceneBounceController(instance.planetEntity);
 
-	EntityUpdate(instance.planetEntity, dt);
+	instance.planetEntity->Update(dt);
 
-	EntityUpdate(instance.monkeyEntity, dt);
+	instance.monkeyEntity->Update(dt);
 
-	EntityUpdate(instance.LivesText, dt);
+	instance.LivesText->Update(dt);
 
 
 	if (Level1SceneIsColliding(instance.planetEntity, instance.monkeyEntity))
@@ -382,17 +382,17 @@ static void Level1SceneUpdate(float dt)
 // Render any objects associated with the scene.
 void Level1SceneRender(void)
 {
-	EntityRender(instance.planetEntity);
-	EntityRender(instance.monkeyEntity);
-	EntityRender(instance.LivesText);
+	instance.planetEntity->Render();
+	instance.monkeyEntity->Render();
+	instance.LivesText->Render();
 }
 
 // Free any objects associated with the scene.
 static void Level1SceneExit()
 {
-	EntityFree(&(instance.planetEntity));
-	EntityFree(&(instance.monkeyEntity));
-	EntityFree(&(instance.LivesText));
+	delete instance.planetEntity;
+	delete instance.monkeyEntity;
+	delete instance.LivesText;
 }
 
 // Unload any resources used by the scene.

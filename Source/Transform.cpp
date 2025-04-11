@@ -47,16 +47,20 @@ Transform::Transform()
 	rotation = 0;
 	translation.x = 0;
 	translation.y = 0;
-	matrix = *GetMatrix();
+	mType = cTransform;
+	mParent = NULL;
 }
 
 Transform::Transform(const Transform* other)
 {
+	mType = cTransform;
+	mParent = NULL;
+
 	scale.x = other->scale.x;
 
 	scale.y = other->scale.y;
 
-	isDirty = other->isDirty;
+	isDirty = true;
 	
 	rotation = other->rotation;
 
@@ -70,43 +74,6 @@ Transform::Transform(const Transform* other)
 Transform::~Transform()
 {
 
-}
-
-// Free the memory associated with a Transform component.
-// (NOTE: The Transform pointer must be set to NULL.)
-// Params:
-//	 transform = Pointer to the Transform pointer.
-void TransformFree(Transform** transform)
-{
-	if (transform && *transform)
-	{
-		free(*transform);
-		*transform = NULL;
-	}
-}
-
-
-// Dynamically allocate a clone of an existing Transform.
-// (Hint: Perform a shallow copy of the member variables.)
-// Params:
-//	 other = Pointer to the component to be cloned.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned component,
-//	   else return NULL.
-Transform* TransformClone(const Transform* other)
-{
-	if (other)
-	{
-		Transform* newTransform = new Transform;
-
-		if (newTransform)
-		{
-			*newTransform = *other;
-			return newTransform;
-		}
-	}
-	return NULL;
 }
 
 
@@ -209,7 +176,7 @@ void Transform::SetScale(const Vector2D* inScale)
 //		else return a NULL pointer.
 const Matrix2D* Transform::GetMatrix()
 {
-	if (isDirty == TRUE)
+	if (isDirty == true)
 	{
 		Matrix2D matrixScale;
 		Matrix2DIdentity(&matrixScale);
@@ -229,10 +196,11 @@ const Matrix2D* Transform::GetMatrix()
 
 		Matrix2DConcat(&rotScale, &matrixRotation, &matrixScale);
 		Matrix2DConcat(&matrix, &matrixTranslation, &rotScale);
-		isDirty = FALSE;
+		isDirty = false;
 
 	}
-		return &matrix;
+
+	return &matrix;
 }
 
 

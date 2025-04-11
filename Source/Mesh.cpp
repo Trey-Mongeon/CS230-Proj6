@@ -189,7 +189,7 @@ void MeshBuildQuad(Mesh* mesh, float xHalfSize, float yHalfSize, float uSize, fl
 	DGL_Graphics_AddTriangle(
 		&negHalfSize, &blackMesh, &v0Size,
 		&HalfSize, &blackMesh, &uSize0,
-		&negYHalfSize, &blackMesh, &HalfSize);
+		&negYHalfSize, &blackMesh, &uvSize);
 	DGL_Graphics_AddTriangle(
 		&negHalfSize, &blackMesh, &v0Size,
 		&negXHalfSize, &blackMesh, &zeros,

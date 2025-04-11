@@ -14,6 +14,7 @@
 #include "Vector2D.h"
 #include "Stream.h"
 #include "Transform.h"
+#include "Entity.h"
 
 //------------------------------------------------------------------------------
 // Private Constants:
@@ -38,60 +39,38 @@
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
-// Dynamically allocate a new Physics component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-// Returns:
-//	 If the memory allocation was successful,
-//	   then return a pointer to the allocated memory,
-//	   else return NULL.
-Physics* PhysicsCreate(void)
-{
-	Physics* physicsPtr = new Physics;
-	if (physicsPtr)
-	{
-		return physicsPtr;
-	}
-	else
-	{
-		return NULL;
-	}
-}
 
-// Free the memory associated with a Physics component.
-// (NOTE: The Physics pointer must be set to NULL.)
-// Params:
-//	 physics = Pointer to the Physics component pointer.
-void PhysicsFree(Physics** physics)
+Physics::Physics()
 {
-	if (physics && *physics)
-	{
-		free(*physics);
-		*physics = NULL;
-	}
+	oldTranslation = { 0, 0 };
+
+	acceleration = { 0, 0 };
+
+	velocity = { 0, 0 };
+
+	rotationalVelocity = 0;
+
+	mParent = NULL;
+
+	mType = cPhysics;
 }
 
 
-// Dynamically allocate a clone of an existing Physics component.
-// (Hint: Perform a shallow copy of the member variables.)
-// Params:
-//	 other = Pointer to the component to be cloned.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned component,
-//	   else return NULL.
-Physics* PhysicsClone(const Physics* other)
+Physics::Physics(const Physics& other)
 {
-	if (other)
-	{
-		Physics* newPhysics = new Physics;
+	oldTranslation = other.oldTranslation;
 
-		if (newPhysics)
-		{
-			*newPhysics = *other;
-			return newPhysics;
-		}
-	}
-	return NULL;
+	acceleration = other.acceleration;
+
+	velocity = other.velocity;
+
+	rotationalVelocity = other.rotationalVelocity;
+}
+
+
+Physics::~Physics()
+{
+
 }
 
 
@@ -182,13 +161,10 @@ void Physics::SetAcceleration(const Vector2D* inAcceleration)
 // Params:
 //	 physics = Pointer to the Physics component.
 //	 velocity = Pointer to a velocity vector.
-void PhysicsSetVelocity(Physics* physics, const Vector2D* velocity)
+void Physics::SetVelocity(const Vector2D* inVelocity)
 {
-	if (physics)
-	{
-		physics->velocity.x = velocity->x;
-		physics->velocity.y = velocity->y;
-	}
+		velocity.x = inVelocity->x;
+		velocity.y = inVelocity->y;
 }
 
 // Update the state of a Physics component using the Semi-Implicit Euler method,
@@ -198,26 +174,25 @@ void PhysicsSetVelocity(Physics* physics, const Vector2D* velocity)
 //	 physics = Pointer to the physics component.
 //	 transform = Pointer to the associated transform component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void PhysicsUpdate(Physics* physics, Transform* transform, float dt)
+void Physics::Update(float dt)
 {
-	if (physics && transform)
-	{
-		Vector2D translation = *TransformGetTranslation(transform);
-		physics->oldTranslation = translation;
+	Transform* transform = GetParent()->GetComponent<Transform>(cTransform);
 
-		Vector2DScaleAdd(&physics->velocity, &physics->acceleration, dt, &physics->velocity);
+	Vector2D translation = *transform->GetTranslation();
+	oldTranslation = translation;
 
-		Vector2DScaleAdd(&translation, &physics->velocity, dt, &translation);
+	Vector2DScaleAdd(&velocity, &acceleration, dt, &velocity);
 
-		TransformSetTranslation(transform, &translation);
+	Vector2DScaleAdd(&translation, &velocity, dt, &translation);
 
-		//rotation stuff
-		float rotation = TransformGetRotation(transform);
+	transform->SetTranslation(&translation);
 
-		rotation += physics->rotationalVelocity * dt;
+	//rotation stuff
+	float rotation = transform->GetRotation();
 
-		TransformSetRotation(transform, rotation);
-	}
+	rotation += rotationalVelocity * dt;
+
+	transform->SetRotation(rotation);
 }
 //------------------------------------------------------------------------------
 // Private Functions:

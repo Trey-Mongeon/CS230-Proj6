@@ -96,8 +96,8 @@ const Scene* Level2SceneGetInstance(void)
 
 static void Level2SceneMovementController(Entity* entity)
 {
-	Physics* entityPhysics = EntityGetPhysics(entity);
-	Sprite* entitySprite = EntityGetSprite(entity);
+	Physics* entityPhysics = entity->GetComponent<Physics>(Component::cPhysics);
+	Sprite* entitySprite = entity->GetComponent<Sprite>(Component::cSprite);
 
 	if (!(entityPhysics && entitySprite))
 	{
@@ -107,19 +107,19 @@ static void Level2SceneMovementController(Entity* entity)
 	Vector2D screenMousePos = DGL_Input_GetMousePosition();
 	Vector2D mousePos = DGL_Camera_ScreenCoordToWorld(&screenMousePos);
 
-	Transform* entityTransform = EntityGetTransform(entity);
-	Vector2D shipPos = *TransformGetTranslation(entityTransform);
+	Transform* entityTransform = entity->GetComponent<Transform>(Component::cTransform);
+	Vector2D shipPos = *entityTransform->GetTranslation();
 	Vector2D vecToMouse;
 	Vector2DSub(&vecToMouse, &mousePos, &shipPos);
 
 	Vector2D normalVecToMouse;
 	Vector2DNormalize(&normalVecToMouse, &vecToMouse);
 
-	TransformSetRotation(entityTransform, Vector2DToAngleRad(&normalVecToMouse));
+	entityTransform->SetRotation(Vector2DToAngleRad(&normalVecToMouse));
 
 	Vector2D scaledNormalVec;
 	Vector2DScale(&scaledNormalVec, &normalVecToMouse, spaceshipSpeed);
-	PhysicsSetVelocity(entityPhysics, &scaledNormalVec);
+	entityPhysics->SetVelocity(&scaledNormalVec);
 
 }
 
@@ -148,7 +148,7 @@ static void Level2SceneInit()
 
 	if (instance.lvl2Entity)
 	{
-		SpriteSetMesh(EntityGetSprite(instance.lvl2Entity), instance.lvl2Mesh);
+		instance.lvl2Entity->GetComponent<Sprite>(Component::cSprite)->SetMesh(instance.lvl2Mesh);
 	}
 	DGL_Color black = { 0.0f, 0.0f, 0.0f, 1.0f };
 	DGL_Graphics_SetBackgroundColor(&black);
@@ -162,15 +162,15 @@ static void Level2SceneInit()
 static void Level2SceneUpdate(float dt)
 {
 	Level2SceneMovementController(instance.lvl2Entity);
-	EntityUpdate(instance.lvl2Entity, dt);
+	instance.lvl2Entity->Update(dt);
 
 	if (DGL_Input_KeyTriggered('Z'))
 	{
-		SpriteSetAlpha(EntityGetSprite(instance.lvl2Entity), 0.5f);
+		instance.lvl2Entity->GetComponent<Sprite>(Component::cSprite)->SetAlpha(0.5f);
 	}
 	if (DGL_Input_KeyTriggered('X'))
 	{
-		SpriteSetAlpha(EntityGetSprite(instance.lvl2Entity), 1.0f);
+		instance.lvl2Entity->GetComponent<Sprite>(Component::cSprite)->SetAlpha(1.0f);
 	}
 }
 
@@ -183,7 +183,7 @@ void Level2SceneRender(void)
 // Free any objects associated with the scene.
 static void Level2SceneExit()
 {
-	EntityFree(&instance.lvl2Entity);
+	delete instance.lvl2Entity;
 }
 
 // Unload any resources used by the scene.

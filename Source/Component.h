@@ -14,6 +14,7 @@
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
+#include "stdafx.h"
 //------------------------------------------------------------------------------
 
 class Entity;
@@ -72,20 +73,27 @@ enum TypeEnum
 	// Clone is used to invoke the C++ copy constructor.
 	virtual Component* Clone() const
 	{
-		return new Component(*this);
+		return NULL;
 	}
 
 	// Component-specific render code.
-	virtual void Update(float dt) 
-	{ 
-		UNREFERENCED_PARAMETER(dt); 
-	};
+	virtual void Update(float dt)
+	{
+		UNREFERENCED_PARAMETER(dt);
+	}
 
 	// Component-specific render code.
-	virtual void Draw() const 
+	virtual void Render() const 
 	{
 
 	};
+
+	// NOTE: This function must be declared as static.
+	static bool Component::Comparator(const Component* left, const Component* right)
+	{
+		return (left->Type() < right->Type());
+	}
+
 
 
 	// Private Variables:
