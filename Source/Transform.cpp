@@ -47,6 +47,7 @@ Transform::Transform()
 	rotation = 0;
 	translation.x = 0;
 	translation.y = 0;
+	Matrix2DIdentity(&matrix);
 	mType = cTransform;
 	mParent = NULL;
 }
@@ -89,6 +90,7 @@ void Transform::Read(Stream stream)
 	StreamReadVector2D(stream, &translation);
 	rotation = StreamReadFloat(stream);
 	StreamReadVector2D(stream, &scale);
+	isDirty = true;
 }
 
 // Get the translation of a Transform component.
