@@ -42,7 +42,7 @@ enum TypeEnum
 	}
 
 
-	~Component()
+	virtual ~Component()
 	{
 
 	}
@@ -71,10 +71,7 @@ enum TypeEnum
 	}
 
 	// Clone is used to invoke the C++ copy constructor.
-	virtual Component* Clone() const
-	{
-		return NULL;
-	}
+	virtual Component* Clone() const = 0;
 
 	// Component-specific render code.
 	virtual void Update(float dt)

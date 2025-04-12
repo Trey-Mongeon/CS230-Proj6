@@ -46,6 +46,13 @@ public:
 
 	~Physics();
 
+	// Create a clone of the current component
+	// (Hint: Invoke the copy constructor)
+	Physics* Clone() const override
+	{
+		return new Physics(*this);
+	}
+
 	void Read(Stream stream);
 
 	const Vector2D* GetAcceleration() const;

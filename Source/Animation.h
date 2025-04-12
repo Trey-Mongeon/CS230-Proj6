@@ -47,6 +47,13 @@ public:
 
 	~Animation();
 
+	// Create a clone of the current component
+	// (Hint: Invoke the copy constructor)
+	Animation* Clone() const override
+	{
+		return new Animation(*this);
+	}
+
 	void Read(Stream stream);
 
 	void Play(int frameCount, float frameDuration, bool isLooping);

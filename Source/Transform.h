@@ -45,6 +45,13 @@ public:
 
 	~Transform();
 
+	// Create a clone of the current component
+	// (Hint: Invoke the copy constructor)
+	Transform* Clone() const override
+	{
+		return new Transform(*this);
+	}
+
 	const Matrix2D* GetMatrix();
 
 	const Vector2D* GetTranslation() const;
