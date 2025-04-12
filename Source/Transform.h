@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
 //
 // File Name:	Transform.h
-// Author(s):	Doug Schilling (dschilling)
-// Project:		Project 4
+// Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
+// Project:		Project 7
 // Course:		CS230S25
 //
 // Copyright © 2025 DigiPen (USA) Corporation.

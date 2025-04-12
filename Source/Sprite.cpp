@@ -2,7 +2,7 @@
 //
 // File Name:	Sprite.cpp
 // Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
-// Project:		Project 2
+// Project:		Project 7
 // Course:		CS230S25
 //
 // Copyright © 2025 DigiPen (USA) Corporation.

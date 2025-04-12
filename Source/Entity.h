@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
 //
 // File Name:	Entity.h
-// Author(s):	Doug Schilling (dschilling)
-// Project:		Project 5
+// Author(s):	Trey Mongeon (tmongeon), Doug Schilling (dschilling)
+// Project:		Project 7
 // Course:		CS230S25
 //
 // Copyright © 2025 DigiPen (USA) Corporation.
@@ -123,6 +123,8 @@ public:
 	void Update(float dt);
 
 	void Render();
+
+	void Free();
 
 	void Entity::Add(Component* component)
 	{

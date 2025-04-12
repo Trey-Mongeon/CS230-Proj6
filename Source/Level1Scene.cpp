@@ -390,9 +390,9 @@ void Level1SceneRender(void)
 // Free any objects associated with the scene.
 static void Level1SceneExit()
 {
-	delete instance.planetEntity;
-	delete instance.monkeyEntity;
-	delete instance.LivesText;
+	instance.planetEntity->Free();
+	instance.monkeyEntity->Free();
+	instance.LivesText->Free();
 }
 
 // Unload any resources used by the scene.

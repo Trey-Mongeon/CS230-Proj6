@@ -183,7 +183,7 @@ void Level2SceneRender(void)
 // Free any objects associated with the scene.
 static void Level2SceneExit()
 {
-	delete instance.lvl2Entity;
+	instance.lvl2Entity->Free();
 }
 
 // Unload any resources used by the scene.
