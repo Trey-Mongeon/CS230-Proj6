@@ -66,7 +66,7 @@ public:
 	void Read(Stream stream);
 
 
-	void Render(Transform* transform) const;
+	void Render() const;
 
 
 	float GetAlpha();

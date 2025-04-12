@@ -20,6 +20,7 @@
 #include "Matrix2D.h"
 #include "MeshLibrary.h"
 #include "SpriteSourceLibrary.h"
+#include "Entity.h"
 
 //------------------------------------------------------------------------------
 // Private Constants:
@@ -103,10 +104,11 @@ void Sprite::Read(Stream stream)
 // Params:
 //	 sprite = Pointer to the Sprite component.
 //   transform = Pointer to the Transform component.
-void Sprite::Render(Transform* transform) const
+void Sprite::Render() const
 {
    	if (mesh)
 	{
+		Transform* transform = GetParent()->GetComponent<Transform>(cTransform);
 		if (spriteSource)
 		{
 			DGL_Graphics_SetShaderMode(DGL_PSM_TEXTURE, DGL_VSM_DEFAULT);

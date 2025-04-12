@@ -213,11 +213,9 @@ void Entity::Update(float dt)
 //	 entity = Pointer to the Entity.
 void Entity::Render()
 {
-	Sprite* sprite = GetComponent<Sprite>(Component::cSprite);
-	Transform* transform = GetComponent<Transform>(Component::cTransform);
-	if (sprite && transform)
+	for (int i = 0; i < components.size(); ++i)
 	{
-		sprite->Render(transform);
+		components[i]->Render();
 	}
 }
 //------------------------------------------------------------------------------
